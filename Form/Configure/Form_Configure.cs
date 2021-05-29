@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
 
-namespace MusicBeePlugin
+namespace MusicBeePlugin.Form.Configure
 {
-    public partial class Form_Configure : Form
+    public partial class Form_Configure : System.Windows.Forms.Form
     {
         private string _filePath = string.Empty;
         private string _fileName = string.Empty;
@@ -30,7 +29,7 @@ namespace MusicBeePlugin
         {
             throw new System.NotImplementedException();
         }
-
+        
         private void button_pfp_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog dialog = openFileDialog_pfp)
@@ -40,7 +39,7 @@ namespace MusicBeePlugin
                     _filePath = dialog.FileName;
                     _fileName = dialog.SafeFileName;
                     
-                    var picStream = dialog.OpenFile();
+                    var picStream = dialog.OpenFile(); // SIZE NOT FORMATTING CORRECTLY FOR WHATEVER REASON
                     
                     try
                     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace MusicBeePlugin
+namespace MusicBeePlugin.Form.Configure
 {
     partial class Form_Configure
     {
@@ -87,7 +87,7 @@ namespace MusicBeePlugin
             this.picbox_pfp.Location = new System.Drawing.Point(12, 114);
             this.picbox_pfp.Name = "picbox_pfp";
             this.picbox_pfp.Size = new System.Drawing.Size(200, 200);
-            this.picbox_pfp.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.picbox_pfp.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picbox_pfp.TabIndex = 4;
             this.picbox_pfp.TabStop = false;
             // 
