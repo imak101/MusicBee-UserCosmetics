@@ -18,7 +18,6 @@ namespace MusicBeePlugin
             
             if (!Exists()) FirstTimeSetup();
             else _xmlDoc.Load(_filePath);
-            
         }
 
         private void FirstTimeSetup()
@@ -54,7 +53,7 @@ namespace MusicBeePlugin
 
             return null;
         }
-
+        
         public void SetFromKey(string key, string value)
         {
             XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key);
@@ -62,6 +61,7 @@ namespace MusicBeePlugin
             if (nodeList.Count > 0)
             {
                 nodeList[0].InnerText = value;
+                _xmlDoc.Save(_filePath);
                 return;
             }
 
@@ -73,7 +73,5 @@ namespace MusicBeePlugin
         {
             return File.Exists(_filePath);
         }
-        
-        
     }
 }

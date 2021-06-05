@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Media;
 using System.Xml;
 using MusicBeePlugin.Form.Configure;
@@ -15,13 +16,11 @@ namespace MusicBeePlugin
     {
         private MusicBeeApiInterface _mbApiInterface;
         private PluginInfo _about = new PluginInfo();
-
+        
         public PluginInfo Initialise(IntPtr apiInterfacePtr)
         {
             _mbApiInterface = new MusicBeeApiInterface();
             _mbApiInterface.Initialise(apiInterfacePtr);
-            
-            //MergeConfig();
             
             _about.PluginInfoVersion = PluginInfoVersion;
             _about.Name = "User Account";
@@ -36,8 +35,6 @@ namespace MusicBeePlugin
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             _about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
-            
-            //MergeConfig();
             
             return _about;
         }
@@ -68,14 +65,12 @@ namespace MusicBeePlugin
             if (form.CheckOpened("User Account"))
             {
                 SystemSounds.Asterisk.Play();
-                form.Dispose();
+                form.Close();
                 throw new Exception("Configuration menu already open!");
             }
             
             form.Show();
-
             
-
             return true;
         }
        
@@ -95,6 +90,7 @@ namespace MusicBeePlugin
         // uninstall this plugin - clean up any persisted files
         public void Uninstall()
         {
+            File.Delete(_mbApiInterface.Setting_GetPersistentStoragePath.Invoke() + "mb_Something1.xml");
         }
 
         // receive event notifications from MusicBee

@@ -24,7 +24,15 @@ namespace MusicBeePlugin.Form.Configure
 
         private void Form_Configure_Load(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            if (_settings.GetFromKey("username") == string.Empty)
+            {
+                return;
+            }
+            _filePath = _settings.GetFromKey("pfpPath");
+            _username = _settings.GetFromKey("username");
+
+            textbox_username.Text = _username;
+            picbox_pfp.Image = Image.FromFile(_filePath);
         }
 
         private void button_submit_Click(object sender, EventArgs e)
@@ -39,44 +47,19 @@ namespace MusicBeePlugin.Form.Configure
                 SystemSounds.Asterisk.Play();
                 throw new Exception("Please select a picture.\n\n\n");
             }
-            //var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             
             _username = textbox_username.Text;
-            Form_Popup popup = new Form_Popup(_settings.GetFromKey("username"), "key test");
-            popup.Show();
-
+            
+            _settings.SetFromKey("pfpPath", _filePath);
+            _settings.SetFromKey("username",_username);
+            
+            Close();
         }
         
-        private static string GetSetting(string key)
-        {
-            return ConfigurationManager.AppSettings[key];
-        }
-
-        private static void SetSetting(string key, string value)
-        {
-            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            Debug.WriteLine(configuration.FilePath);
-            configuration.AppSettings.Settings[key].Value = value;
-            configuration.Save(ConfigurationSaveMode.Full, true);
-            ConfigurationManager.RefreshSection(configuration.AppSettings.SectionInformation.Name);
-            
-            ExeConfigurationFileMap ds = new ExeConfigurationFileMap();
-            
-        }
-
-        private void ffff(string key, string val)
-        {
-            var con = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            ConfigurationManager.AppSettings[key] = val;
-            con.Save(ConfigurationSaveMode.Full, true);
-            ConfigurationManager.RefreshSection("appSettings");
-            label_pfp.Text = ConfigurationManager.AppSettings.Get("pfpPath");
-
-        }
-
+        
         private void button_cancel_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            Close();
         }
         
         private void button_pfp_Click(object sender, EventArgs e)
@@ -109,7 +92,6 @@ namespace MusicBeePlugin.Form.Configure
                         throw new Exception("This file is invalid. Your file's dimensions may be too large or not in valid .jpg or .png form.");
                     }
                 }
-
             }
         }
 
@@ -117,6 +99,7 @@ namespace MusicBeePlugin.Form.Configure
         {
             throw new System.NotImplementedException();
         }
+        
         public bool CheckOpened(string name)
         {
             FormCollection fc = Application.OpenForms;
