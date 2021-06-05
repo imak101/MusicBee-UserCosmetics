@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
+using MusicBeePlugin.Form.Popup;
 
 namespace MusicBeePlugin.Form.Configure
 {
@@ -39,9 +40,10 @@ namespace MusicBeePlugin.Form.Configure
                 throw new Exception("Please select a picture.\n\n\n");
             }
             //var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            _username = textbox_username.Text;
             
+            _username = textbox_username.Text;
+            Form_Popup popup = new Form_Popup(_settings.GetFromKey("username"), "key test");
+            popup.Show();
 
         }
         

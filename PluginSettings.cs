@@ -42,17 +42,30 @@ namespace MusicBeePlugin
             
             _xmlDoc.Save(_filePath);
         }
-
+        
         public string GetFromKey(string key)
         {
             XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key); //TODO: could be made more dynamic
 
             if (nodeList.Count > 0)
             {
-                return nodeList[0].ToString();
+                return nodeList[0].InnerText;
             }
 
             return null;
+        }
+
+        public void SetFromKey(string key, string value)
+        {
+            XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key);
+
+            if (nodeList.Count > 0)
+            {
+                nodeList[0].InnerText = value;
+                return;
+            }
+
+            throw new Exception($"Key '{key}' does not exist.");
         }
 
 

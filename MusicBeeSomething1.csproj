@@ -85,6 +85,12 @@
     <Compile Include="Form\Configure\Form_Configure.Designer.cs">
       <DependentUpon>Form_Configure.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\Popup\Form_Popup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\Popup\Form_Popup.Designer.cs">
+      <DependentUpon>Form_Popup.cs</DependentUpon>
+    </Compile>
     <Compile Include="MusicBeeInterface.cs" />
     <Compile Include="PluginSettings.cs" />
     <Compile Include="Something.cs" />
@@ -116,9 +122,9 @@
     <EmbeddedResource Include="Form\Configure\Form_Configure.resx">
       <DependentUpon>Form_Configure.cs</DependentUpon>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-<!--    <None Include="App.config" />-->
+    <EmbeddedResource Include="Form\Popup\Form_Popup.resx">
+      <DependentUpon>Form_Popup.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   
