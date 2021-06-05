@@ -3,6 +3,10 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.Media;
+using System.Xml;
 using MusicBeePlugin.Form.Configure;
 
 namespace MusicBeePlugin
@@ -16,6 +20,9 @@ namespace MusicBeePlugin
         {
             _mbApiInterface = new MusicBeeApiInterface();
             _mbApiInterface.Initialise(apiInterfacePtr);
+            
+            //MergeConfig();
+            
             _about.PluginInfoVersion = PluginInfoVersion;
             _about.Name = "User Account";
             _about.Description = "Add a user account with a username and profile picture.";
@@ -29,6 +36,9 @@ namespace MusicBeePlugin
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             _about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
+            
+            //MergeConfig();
+            
             return _about;
         }
 
@@ -51,10 +61,21 @@ namespace MusicBeePlugin
                 configPanel.Controls.AddRange(new Control[] { prompt, textBox });
             }
 
-            Form_Configure form = new Form_Configure();
+            var settings = new PluginSettings(ref _mbApiInterface);
+
+            Form_Configure form = new Form_Configure(ref settings);
+            
+            if (form.CheckOpened("User Account"))
+            {
+                SystemSounds.Asterisk.Play();
+                form.Dispose();
+                throw new Exception("Configuration menu already open!");
+            }
+            
             form.Show();
+
             
-            
+
             return true;
         }
        
@@ -158,6 +179,30 @@ namespace MusicBeePlugin
             e.Graphics.Clear(Color.Red);
             TextRenderer.DrawText(e.Graphics, "hello", SystemFonts.CaptionFont, new Point(10, 10), Color.Blue);
         }
+
+        private void MergeConfig()
+        {
+            XmlDocument xmlConfig = new XmlDocument();
+            // try
+            // {
+            //     xmlConfig.Load("MusicBee.exe.Config");
+            // }
+            // catch (XmlException)
+            // {
+            //     throw new Exception(
+            //         "Unable to load 'MusicBee.exe.Config', please ensure that it exists and is present in the executable directory.");
+            // }
+            xmlConfig.Load("..\\MusicBee.exe.Config");
+            // xmlConfig.Load(System.IO.Directory.GetCurrentDirectory());
+            // System.IO.File.op
+
+
+            XmlAttribute attribute = xmlConfig.CreateAttribute("file");
+            attribute.Value = "Plugins\\mb_Something1.dll.config";
+            xmlConfig.Attributes.GetNamedItem("appSettings").Attributes.Append(attribute);
+            xmlConfig.Save("..\\MusicBee.exe.Config");
+        }
+        
 
     }
 }

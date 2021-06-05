@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
@@ -9,10 +11,14 @@ namespace MusicBeePlugin.Form.Configure
     {
         private string _filePath = string.Empty;
         private string _fileName = string.Empty;
+        private string _username = string.Empty;
+        private PluginSettings _settings;
 
-        public Form_Configure()
+
+        public Form_Configure(ref PluginSettings settings)
         {
             InitializeComponent();
+            _settings = settings;
         }
 
         private void Form_Configure_Load(object sender, EventArgs e)
@@ -22,7 +28,48 @@ namespace MusicBeePlugin.Form.Configure
 
         private void button_submit_Click(object sender, EventArgs e)
         {
-            throw new System.NotImplementedException();
+            if (textbox_username.Text == string.Empty)
+            {
+                SystemSounds.Asterisk.Play();
+                throw new Exception("Please enter a username.\n\n\n");
+            }
+            if (picbox_pfp.Image == null)
+            {
+                SystemSounds.Asterisk.Play();
+                throw new Exception("Please select a picture.\n\n\n");
+            }
+            //var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+            _username = textbox_username.Text;
+            
+
+        }
+        
+        private static string GetSetting(string key)
+        {
+            return ConfigurationManager.AppSettings[key];
+        }
+
+        private static void SetSetting(string key, string value)
+        {
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            Debug.WriteLine(configuration.FilePath);
+            configuration.AppSettings.Settings[key].Value = value;
+            configuration.Save(ConfigurationSaveMode.Full, true);
+            ConfigurationManager.RefreshSection(configuration.AppSettings.SectionInformation.Name);
+            
+            ExeConfigurationFileMap ds = new ExeConfigurationFileMap();
+            
+        }
+
+        private void ffff(string key, string val)
+        {
+            var con = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            ConfigurationManager.AppSettings[key] = val;
+            con.Save(ConfigurationSaveMode.Full, true);
+            ConfigurationManager.RefreshSection("appSettings");
+            label_pfp.Text = ConfigurationManager.AppSettings.Get("pfpPath");
+
         }
 
         private void button_cancel_Click(object sender, EventArgs e)
@@ -39,8 +86,8 @@ namespace MusicBeePlugin.Form.Configure
                     _filePath = dialog.FileName;
                     _fileName = dialog.SafeFileName;
                     
-                    var picStream = dialog.OpenFile(); // SIZE NOT FORMATTING CORRECTLY FOR WHATEVER REASON
-                    
+                    var picStream = dialog.OpenFile(); // ONLY PictureBoxSizeMode.Zoom WORKS
+
                     try
                     {
                         using (var picBitmap = new Bitmap(picStream))
@@ -68,6 +115,18 @@ namespace MusicBeePlugin.Form.Configure
         {
             throw new System.NotImplementedException();
         }
-        
+        public bool CheckOpened(string name)
+        {
+            FormCollection fc = Application.OpenForms;
+
+            foreach (System.Windows.Forms.Form frm in fc)
+            {
+                if (frm.Text == name)
+                {
+                    return true; 
+                }
+            }
+            return false;
+        }
     }
 }
