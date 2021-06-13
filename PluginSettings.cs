@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml;
+using MusicBeePlugin.Form.Popup;
 
 namespace MusicBeePlugin
 {
@@ -64,8 +65,8 @@ namespace MusicBeePlugin
                 _xmlDoc.Save(_filePath);
                 return;
             }
-
-            throw new Exception($"Key '{key}' does not exist.");
+            
+            new Form_Popup("Key '" + key + "' not found.", "SetFromKey Error"); // TODO: INTERPOLATE
         }
 
 

@@ -9,6 +9,7 @@ using System.IO;
 using System.Media;
 using System.Xml;
 using MusicBeePlugin.Form.Configure;
+using MusicBeePlugin.Form.Popup;
 
 namespace MusicBeePlugin
 {
@@ -66,7 +67,8 @@ namespace MusicBeePlugin
             {
                 SystemSounds.Asterisk.Play();
                 form.Close();
-                throw new Exception("Configuration menu already open!");
+                new Form_Popup("Configuration menu already open!", "Error");
+                return true;
             }
             
             form.Show();
@@ -76,11 +78,7 @@ namespace MusicBeePlugin
        
         // called by MusicBee when the user clicks Apply or Save in the MusicBee Preferences screen.
         // its up to you to figure out whether anything has changed and needs updating
-        public void SaveSettings()
-        {
-            // save any persistent settings in a sub-folder of this path
-            string dataPath = _mbApiInterface.Setting_GetPersistentStoragePath();
-        }
+        public void SaveSettings() {}
 
         // MusicBee is closing the plugin (plugin is being disabled by user or MusicBee is shutting down)
         public void Close(PluginCloseReason reason)
@@ -161,6 +159,16 @@ namespace MusicBeePlugin
             return Convert.ToInt32(100 * dpiScaling);
         }
 
+        private void panel_Paint(object sender, PaintEventArgs e)
+        {
+            
+           // _mbApiInterface.Setting_GetSkinElementColour.Invoke(SkinElement d);
+           
+            
+            e.Graphics.Clear(Color.Blue);
+            TextRenderer.DrawText(e.Graphics, "uwu", SystemFonts.CaptionFont, new Point(10, 10), Color.Blue);
+        }
+
         // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
         // return the list of ToolStripMenuItems that will be displayed
         public List<ToolStripItem> GetHeaderMenuItems()
@@ -169,36 +177,5 @@ namespace MusicBeePlugin
             list.Add(new ToolStripMenuItem("A menu item"));
             return list;
         }
-
-        private void panel_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.Clear(Color.Red);
-            TextRenderer.DrawText(e.Graphics, "hello", SystemFonts.CaptionFont, new Point(10, 10), Color.Blue);
-        }
-
-        private void MergeConfig()
-        {
-            XmlDocument xmlConfig = new XmlDocument();
-            // try
-            // {
-            //     xmlConfig.Load("MusicBee.exe.Config");
-            // }
-            // catch (XmlException)
-            // {
-            //     throw new Exception(
-            //         "Unable to load 'MusicBee.exe.Config', please ensure that it exists and is present in the executable directory.");
-            // }
-            xmlConfig.Load("..\\MusicBee.exe.Config");
-            // xmlConfig.Load(System.IO.Directory.GetCurrentDirectory());
-            // System.IO.File.op
-
-
-            XmlAttribute attribute = xmlConfig.CreateAttribute("file");
-            attribute.Value = "Plugins\\mb_Something1.dll.config";
-            xmlConfig.Attributes.GetNamedItem("appSettings").Attributes.Append(attribute);
-            xmlConfig.Save("..\\MusicBee.exe.Config");
-        }
-        
-
     }
 }
