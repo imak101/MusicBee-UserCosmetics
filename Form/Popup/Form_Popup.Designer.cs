@@ -62,6 +62,7 @@ namespace MusicBeePlugin.Form.Popup
             this.ControlBox = false;
             this.Controls.Add(this.button_ok);
             this.Controls.Add(this.label_main);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Form_Popup";
             this.ShowIcon = false;
             this.Text = "Popup";

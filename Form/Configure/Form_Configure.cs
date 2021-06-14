@@ -40,12 +40,14 @@ namespace MusicBeePlugin.Form.Configure
             if (textbox_username.Text == string.Empty)
             {
                 SystemSounds.Asterisk.Play();
-                throw new Exception("Please enter a username.\n\n\n");
+                new Form_Popup("Please enter a username", "Error");
+                return;
             }
             if (picbox_pfp.Image == null)
             {
                 SystemSounds.Asterisk.Play();
-                throw new Exception("Please select a picture.\n\n\n");
+                new Form_Popup("Please select a picture", "Error");
+                return;
             }
             
             _username = textbox_username.Text;
@@ -89,7 +91,7 @@ namespace MusicBeePlugin.Form.Configure
 
                         picbox_pfp.Image = null;
                         
-                        throw new Exception("This file is invalid. Your file's dimensions may be too large or not in valid .jpg or .png form.");
+                        new Form_Popup("This file is invalid. Your file's dimensions may be too large or not in valid .jpg or .png format.", "Error");
                     }
                 }
             }

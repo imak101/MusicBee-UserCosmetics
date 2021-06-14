@@ -13,6 +13,8 @@ namespace MusicBeePlugin.Form.Popup
             InitializeComponent();
             _msg = msg;
             _title = title;
+            
+            Show();
         }
 
         private void button_ok_Click(object sender, EventArgs e)
