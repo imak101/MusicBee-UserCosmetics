@@ -3,10 +3,12 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Media;
+using System.Threading;
 using System.Xml;
 using MusicBeePlugin.Form.Configure;
 using MusicBeePlugin.Form.Popup;
@@ -160,13 +162,12 @@ namespace MusicBeePlugin
         }
 
         private void panel_Paint(object sender, PaintEventArgs e)
-        {
-            
-           // _mbApiInterface.Setting_GetSkinElementColour.Invoke(SkinElement d);
+        { 
+            var bgColorFromMb = Color.FromArgb(_mbApiInterface.Setting_GetSkinElementColour.Invoke(SkinElement.SkinSubPanel,ElementState.ElementStateDefault, ElementComponent.ComponentBackground)); 
+            var fgColorFromMb = Color.FromArgb(_mbApiInterface.Setting_GetSkinElementColour.Invoke(SkinElement.SkinSubPanel,ElementState.ElementStateDefault,ElementComponent.ComponentForeground));
            
-            
-            e.Graphics.Clear(Color.Blue);
-            TextRenderer.DrawText(e.Graphics, "uwu", SystemFonts.CaptionFont, new Point(10, 10), Color.Blue);
+            e.Graphics.Clear(bgColorFromMb);
+            TextRenderer.DrawText(e.Graphics, "TwT",SystemFonts.CaptionFont, new Point(10,10),fgColorFromMb);
         }
 
         // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
