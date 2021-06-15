@@ -15,13 +15,16 @@ namespace MusicBeePlugin
 
         private Color _bgColor;
         private Color _fgColor;
+
+        private string _pfpPath;
+        private string _username;
         
         public PaintManager(ref Plugin.MusicBeeApiInterface mbAPI, ref PluginSettings settings)
         {
             _mbAPI = mbAPI;
             _settings = settings;
             
-            SetColors();
+            SetColorsFromSkin();
         }
 
         public void SetArgs(ref PaintEventArgs args)
@@ -29,16 +32,25 @@ namespace MusicBeePlugin
             _eventArgs = args;
         }
 
-        private void SetColors()
+        private void SetColorsFromSkin()
         {
             _bgColor = Color.FromArgb(_mbAPI.Setting_GetSkinElementColour.Invoke(Plugin.SkinElement.SkinSubPanel,Plugin.ElementState.ElementStateDefault, Plugin.ElementComponent.ComponentBackground)); 
             _fgColor = Color.FromArgb(_mbAPI.Setting_GetSkinElementColour.Invoke(Plugin.SkinElement.SkinSubPanel,Plugin.ElementState.ElementStateDefault,Plugin.ElementComponent.ComponentForeground));
         }
 
+        private void SetCredentials()
+        {
+            _pfpPath = _settings.GetFromKey("pfpPath");
+            _username = _settings.GetFromKey("username");
+        }
+
         public void test()
         {
+            SetCredentials();
+            
+            
             _eventArgs.Graphics.Clear(_bgColor);
-            TextRenderer.DrawText(_eventArgs.Graphics,"yes", SystemFonts.CaptionFont, new Point(10,10), _fgColor);
+            TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, new Point(10,10), _fgColor);
         }
         
         private Bitmap ResizeImage(Image image, int width, int height)

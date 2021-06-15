@@ -4,14 +4,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Media;
 using System.Threading;
-using System.Xml;
 using MusicBeePlugin.Form.Configure;
 using MusicBeePlugin.Form.Popup;
 
@@ -152,6 +148,20 @@ namespace MusicBeePlugin
         //  you can add your own controls to the panel if needed
         //  you can control the scrollable area of the panel using the mbApiInterface.MB_SetPanelScrollableArea function
         //  to set a MusicBee header for the panel, set about.TargetApplication in the Initialise function above to the panel header text
+        private static Control _formPanel;
+
+        public static Control FormControl
+        {
+            get { return _formPanel; }
+            private set { _formPanel = SetPanel(ref value); } //TODO: Format properly
+        }
+
+        private static Control SetPanel(ref Control panel)
+        {
+            _formPanel = panel;
+            return _formPanel;
+        }
+        
         public int OnDockablePanelCreated(Control panel)
         {
           //    return the height of the panel and perform any initialisation here
@@ -164,7 +174,8 @@ namespace MusicBeePlugin
             {
                 dpiScaling = g.DpiY / 96f;
             }
-            panel.Paint += panel_Paint;
+            panel.Paint += temp_Paint;
+            FormControl = panel;
             return Convert.ToInt32(100 * dpiScaling);
         }
 

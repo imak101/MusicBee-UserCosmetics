@@ -56,6 +56,8 @@ namespace MusicBeePlugin.Form.Configure
             _settings.SetFromKey("username",_username);
             
             Close();
+            
+            Plugin.FormControl.Invalidate();
         }
         
         
