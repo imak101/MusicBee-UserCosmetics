@@ -114,7 +114,7 @@ namespace MusicBeePlugin.Form.Configure
             // openFileDialog_pfp
             // 
             this.openFileDialog_pfp.DefaultExt = "jpg";
-            this.openFileDialog_pfp.Filter = "*.jpg | *.jpg| *.png | *.png";
+            this.openFileDialog_pfp.Filter = "*.jpg *.png| *.jpg; *.png";
             this.openFileDialog_pfp.InitialDirectory = "C:\\";
             this.openFileDialog_pfp.Title = "Select Picture";
             // 

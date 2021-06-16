@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using MusicBeePlugin.Form.Popup;
 
 
 namespace MusicBeePlugin
@@ -10,21 +11,29 @@ namespace MusicBeePlugin
     public class PaintManager
     {
         private PaintEventArgs _eventArgs;
-        private Plugin.MusicBeeApiInterface _mbAPI;
-        private PluginSettings _settings;
+        private readonly Plugin.MusicBeeApiInterface _mbAPI;
+        private readonly PluginSettings _settings;
 
         private Color _bgColor;
         private Color _fgColor;
 
         private string _pfpPath;
         private string _username;
+        private string _oldPfpPath;
+
+        private Point _usernamePoint = new Point(10, 10);
+        private Point _pfpPoint = new Point(80, 20);
+
+        private Image _pfp;
         
         public PaintManager(ref Plugin.MusicBeeApiInterface mbAPI, ref PluginSettings settings)
         {
             _mbAPI = mbAPI;
             _settings = settings;
-            
+
             SetColorsFromSkin();
+            SetCredentials();
+
         }
 
         public void SetArgs(ref PaintEventArgs args)
@@ -44,13 +53,27 @@ namespace MusicBeePlugin
             _username = _settings.GetFromKey("username");
         }
 
-        public void test()
+        public void MainPainter()
         {
+            _oldPfpPath = _pfpPath;
             SetCredentials();
             
-            
             _eventArgs.Graphics.Clear(_bgColor);
-            TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, new Point(10,10), _fgColor);
+            
+            TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
+            _eventArgs.Graphics.DrawImage(ImageManager(), _pfpPoint);
+        }
+
+        private Image ImageManager()
+        {
+            string currentPath = _pfpPath;
+
+            if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath)
+            {
+                _pfp = ResizeImage(Image.FromFile(_pfpPath), 60, 60);
+            }
+            
+            return _pfp;
         }
         
         private Bitmap ResizeImage(Image image, int width, int height)

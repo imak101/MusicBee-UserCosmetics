@@ -41,7 +41,7 @@ namespace MusicBeePlugin
 
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
-            
+
             return _about;
         }
 
@@ -152,8 +152,8 @@ namespace MusicBeePlugin
 
         public static Control FormControl
         {
-            get { return _formPanel; }
-            private set { _formPanel = SetPanel(ref value); } //TODO: Format properly
+            get => _formPanel;
+            private set => _formPanel = SetPanel(ref value);
         }
 
         private static Control SetPanel(ref Control panel)
@@ -195,7 +195,7 @@ namespace MusicBeePlugin
         {
             _paintManager.SetArgs(ref e);
             
-            _paintManager.test();
+            _paintManager.MainPainter();
         }
 
         // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
