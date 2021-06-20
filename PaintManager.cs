@@ -61,10 +61,10 @@ namespace MusicBeePlugin
             _eventArgs.Graphics.Clear(_bgColor);
             
             TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
-            _eventArgs.Graphics.DrawImage(ImageManager(), _pfpPoint);
+            _eventArgs.Graphics.DrawImage(ImageHandler(), _pfpPoint);
         }
 
-        private Image ImageManager()
+        private Image ImageHandler()
         {
             string currentPath = _pfpPath;
 
