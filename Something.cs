@@ -148,18 +148,18 @@ namespace MusicBeePlugin
         //  you can add your own controls to the panel if needed
         //  you can control the scrollable area of the panel using the mbApiInterface.MB_SetPanelScrollableArea function
         //  to set a MusicBee header for the panel, set about.TargetApplication in the Initialise function above to the panel header text
-        private static Control _formPanel;
+        private static Control _formControlMain;
 
-        public static Control FormControl
+        public static Control FormControlMain
         {
-            get => _formPanel;
-            private set => _formPanel = SetPanel(ref value);
+            get => _formControlMain;
+            private set => _formControlMain = SetControl(ref value);
         }
 
-        private static Control SetPanel(ref Control panel)
+        private static Control SetControl(ref Control panel)
         {
-            _formPanel = panel;
-            return _formPanel;
+            _formControlMain = panel;
+            return _formControlMain;
         }
         
         public int OnDockablePanelCreated(Control panel)
@@ -175,8 +175,14 @@ namespace MusicBeePlugin
                 dpiScaling = g.DpiY / 96f;
             }
             panel.Paint += temp_Paint;
-            FormControl = panel;
+            panel.MouseClick += panel_click; // TODO: remove
+            FormControlMain = panel;
             return Convert.ToInt32(100 * dpiScaling);
+        }
+
+        private void panel_click(object sender, MouseEventArgs e)
+        {
+            new Form_Popup($"X: {e.X} Y:{e.Y}", "cords"); // for debug
         }
 
         private void panel_Paint(object sender, PaintEventArgs e)

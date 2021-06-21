@@ -57,7 +57,7 @@ namespace MusicBeePlugin.Form.Configure
             
             Close();
             
-            Plugin.FormControl.Invalidate();
+            Plugin.FormControlMain.Invalidate();
         }
         
         
