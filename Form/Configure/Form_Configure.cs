@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Diagnostics;
 using System.Drawing;
 using System.Media;
 using System.Windows.Forms;
@@ -11,7 +9,7 @@ namespace MusicBeePlugin.Form.Configure
     public partial class Form_Configure : System.Windows.Forms.Form
     {
         private string _filePath = string.Empty;
-        private string _fileName = string.Empty;
+        private string _fileName = string.Empty; // unneeded?
         private string _username = string.Empty;
         private PluginSettings _settings;
 

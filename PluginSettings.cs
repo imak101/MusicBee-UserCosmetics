@@ -45,7 +45,7 @@ namespace MusicBeePlugin
         
         public string GetFromKey(string key)
         {
-            XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key); //TODO: could be made more dynamic
+            XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key); //TODO: could be made more dynamic ...?
 
             if (nodeList.Count > 0)
             {
