@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Media;
 using System.Windows.Forms;
 using MusicBeePlugin.Form.Popup;
@@ -22,7 +23,7 @@ namespace MusicBeePlugin.Form.Configure
 
         private void Form_Configure_Load(object sender, EventArgs e)
         {
-            if (_settings.GetFromKey("username") == string.Empty)
+            if (_settings.GetFromKey("username") == string.Empty || _settings.GetFromKey("pfpPath") == string.Empty)
             {
                 return;
             }
@@ -30,7 +31,16 @@ namespace MusicBeePlugin.Form.Configure
             _username = _settings.GetFromKey("username");
 
             textbox_username.Text = _username;
-            picbox_pfp.Image = Image.FromFile(_filePath);
+
+            try
+            {
+                picbox_pfp.Image = Image.FromFile(_filePath);
+            }
+            catch (FileNotFoundException exception)
+            {
+                new Form_Popup($"The file {exception.Message} was not found.", "File not found");
+                _settings.SetFromKey("pfpPath", string.Empty);
+            }
         }
 
         private void button_submit_Click(object sender, EventArgs e)
