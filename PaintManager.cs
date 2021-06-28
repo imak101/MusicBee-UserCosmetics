@@ -21,8 +21,8 @@ namespace MusicBeePlugin
         private string _username;
         private string _oldPfpPath;
 
-        private Point _usernamePoint = new Point(105,83);
-        private Point _pfpPoint = new Point(100, 20);
+        private Point _usernamePoint; //= new Point(105,83);     < -- Fallback values
+        private Point _pfpPoint; //= new Point(100, 20);
 
         private Image _pfp;
 
@@ -61,10 +61,10 @@ namespace MusicBeePlugin
             SetCredentials();
             
             _eventArgs.Graphics.Clear(_bgColor);
-            
-            TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
+
             CalculateCenter_Point();
             
+            TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
             _eventArgs.Graphics.DrawImage(ImageHandler(), _pfpPoint);
         }
 
@@ -113,9 +113,12 @@ namespace MusicBeePlugin
             {
                 ImageHandler();
             }
-
+            
             _pfpPoint.X = _controlMain.Size.Width / 2 - _pfp.Width / 2;
             _pfpPoint.Y = _controlMain.Size.Height / 2 - _pfp.Height / 2;
+
+            _usernamePoint.X = Convert.ToInt32((_controlMain.Size.Width - _eventArgs.Graphics.MeasureString(_username, SystemFonts.CaptionFont).Width) / 2); // calculate text center relative to text and control size
+            _usernamePoint.Y = (_controlMain.Height / 2) + _pfp.Height / 2 + 3;
         }
     }
 }
