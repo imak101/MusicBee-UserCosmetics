@@ -40,7 +40,6 @@ namespace MusicBeePlugin.Form.Configure
             this.button_submit = new System.Windows.Forms.Button();
             this.button_cancel = new System.Windows.Forms.Button();
             this.openFileDialog_pfp = new System.Windows.Forms.OpenFileDialog();
-            this.folderBrowserDialog_pfp = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).BeginInit();
             this.SuspendLayout();
             // 
@@ -118,11 +117,6 @@ namespace MusicBeePlugin.Form.Configure
             this.openFileDialog_pfp.InitialDirectory = "C:\\";
             this.openFileDialog_pfp.Title = "Select Picture";
             // 
-            // folderBrowserDialog_pfp
-            // 
-            this.folderBrowserDialog_pfp.Description = "Select Picture";
-            this.folderBrowserDialog_pfp.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            // 
             // Form_Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -145,9 +139,7 @@ namespace MusicBeePlugin.Form.Configure
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog_pfp;
-
+        
         private System.Windows.Forms.OpenFileDialog openFileDialog_pfp;
 
         private System.Windows.Forms.Button button_cancel;
