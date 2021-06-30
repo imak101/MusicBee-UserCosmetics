@@ -69,7 +69,10 @@ namespace MusicBeePlugin.Form.Configure
             {
                 Plugin.FormControlMain.Invalidate();
             }
-            catch (NullReferenceException) {}
+            catch (NullReferenceException)
+            {
+                new Form_Popup("Your account has been set! To see it in the application, add the panel 'user account' to your view with MusicBee's 'Arrange Panels' menu option.", "Set Panel");
+            }
         }
         
         
