@@ -40,6 +40,7 @@ namespace MusicBeePlugin.Form.Configure
             this.button_submit = new System.Windows.Forms.Button();
             this.button_cancel = new System.Windows.Forms.Button();
             this.openFileDialog_pfp = new System.Windows.Forms.OpenFileDialog();
+            this.button_about = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).BeginInit();
             this.SuspendLayout();
             // 
@@ -117,11 +118,22 @@ namespace MusicBeePlugin.Form.Configure
             this.openFileDialog_pfp.InitialDirectory = "C:\\";
             this.openFileDialog_pfp.Title = "Select Picture";
             // 
+            // button_about
+            // 
+            this.button_about.Location = new System.Drawing.Point(542, 12);
+            this.button_about.Name = "button_about";
+            this.button_about.Size = new System.Drawing.Size(90, 40);
+            this.button_about.TabIndex = 7;
+            this.button_about.Text = "About";
+            this.button_about.UseVisualStyleBackColor = true;
+            this.button_about.Click += new System.EventHandler(this.button_about_Click);
+            // 
             // Form_Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 316);
+            this.Controls.Add(this.button_about);
             this.Controls.Add(this.button_cancel);
             this.Controls.Add(this.button_submit);
             this.Controls.Add(this.picbox_pfp);
@@ -139,7 +151,9 @@ namespace MusicBeePlugin.Form.Configure
             this.ResumeLayout(false);
             this.PerformLayout();
         }
-        
+
+        private System.Windows.Forms.Button button_about;
+
         private System.Windows.Forms.OpenFileDialog openFileDialog_pfp;
 
         private System.Windows.Forms.Button button_cancel;

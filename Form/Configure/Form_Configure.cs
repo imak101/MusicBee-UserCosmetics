@@ -125,5 +125,12 @@ namespace MusicBeePlugin.Form.Configure
             }
             return false;
         }
+
+        private void button_about_Click(object sender, EventArgs e)
+        {
+            Plugin.PluginInfo pluginAbout = Plugin.About;
+            
+            new Form_Popup($"Plugin Title: {pluginAbout.Name}\nAuthor: {pluginAbout.Author}\nVersion: {pluginAbout.VersionMajor}.{pluginAbout.VersionMinor}.{pluginAbout.Revision}", "About");
+        }
     }
 }

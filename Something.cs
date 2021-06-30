@@ -32,13 +32,14 @@ namespace MusicBeePlugin
             _about.TargetApplication = "User";   //  the name of a Plugin Storage device or panel header for a dockable panel
             _about.Type = PluginType.General;
             _about.VersionMajor = 0;  // your plugin version
-            _about.VersionMinor = 0;
-            _about.Revision = 1;
+            _about.VersionMinor = 1;
+            _about.Revision = 0;
             _about.MinInterfaceVersion = MinInterfaceVersion;
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             _about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
-
+            About = _about;
+            
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
 
@@ -80,7 +81,20 @@ namespace MusicBeePlugin
             
             return true;
         }
-       
+
+        private static PluginInfo _About;
+
+        private static void SetAbout(ref PluginInfo about)
+        {
+            _About = about;
+        }
+
+        public static PluginInfo About
+        {
+            get => _About;
+            private set => SetAbout(ref value);
+        }
+
         // called by MusicBee when the user clicks Apply or Save in the MusicBee Preferences screen.
         // its up to you to figure out whether anything has changed and needs updating
         public void SaveSettings() {}
@@ -174,8 +188,8 @@ namespace MusicBeePlugin
             {
                 dpiScaling = g.DpiY / 96f;
             }
-            panel.Paint += temp_Paint;
-            panel.MouseClick += panel_click; // TODO: remove
+            panel.Paint += panel_Paint;
+            // panel.MouseClick += panel_click; // TODO: remove
             FormControlMain = panel;
             return Convert.ToInt32(100 * dpiScaling);
         }
@@ -186,18 +200,6 @@ namespace MusicBeePlugin
         }
 
         private void panel_Paint(object sender, PaintEventArgs e)
-        { 
-            var bgColorFromMb = Color.FromArgb(_mbApiInterface.Setting_GetSkinElementColour.Invoke(SkinElement.SkinSubPanel,ElementState.ElementStateDefault, ElementComponent.ComponentBackground)); 
-            var fgColorFromMb = Color.FromArgb(_mbApiInterface.Setting_GetSkinElementColour.Invoke(SkinElement.SkinSubPanel,ElementState.ElementStateDefault,ElementComponent.ComponentForeground));
-            
-            //var imageb = ResizeImage(Image.FromFile("F:\\Code\\Misc\\Asset\\pfp\\20210430_133900.png"), 60, 60);
-            
-            e.Graphics.Clear(bgColorFromMb);
-           // e.Graphics.DrawImage(imageb, new Point(100,20));
-            TextRenderer.DrawText(e.Graphics, "imak101",SystemFonts.CaptionFont, new Point(106,83),fgColorFromMb);
-        }
-
-        private void temp_Paint(object sender, PaintEventArgs e)
         {
             _paintManager.SetArgs(ref e);
             
@@ -206,11 +208,11 @@ namespace MusicBeePlugin
 
         // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
         // return the list of ToolStripMenuItems that will be displayed
-        public List<ToolStripItem> GetHeaderMenuItems()
-        {
-            List<ToolStripItem> list = new List<ToolStripItem>();
-            list.Add(new ToolStripMenuItem("A menu item"));
-            return list;
-        }
+        // public List<ToolStripItem> GetHeaderMenuItems()
+        // {
+        //     List<ToolStripItem> list = new List<ToolStripItem>();
+        //     list.Add(new ToolStripMenuItem("A menu item"));
+        //     return list;
+        // }
     }
 }
