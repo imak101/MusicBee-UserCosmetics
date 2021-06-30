@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Configuration;
-using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Media;
 using System.Windows.Forms;
 using MusicBeePlugin.Form.Popup;
@@ -11,7 +10,7 @@ namespace MusicBeePlugin.Form.Configure
     public partial class Form_Configure : System.Windows.Forms.Form
     {
         private string _filePath = string.Empty;
-        private string _fileName = string.Empty;
+        private string _fileName = string.Empty; // unneeded?
         private string _username = string.Empty;
         private PluginSettings _settings;
 
@@ -24,7 +23,7 @@ namespace MusicBeePlugin.Form.Configure
 
         private void Form_Configure_Load(object sender, EventArgs e)
         {
-            if (_settings.GetFromKey("username") == string.Empty)
+            if (_settings.GetFromKey("username") == string.Empty || _settings.GetFromKey("pfpPath") == string.Empty)
             {
                 return;
             }
@@ -32,7 +31,16 @@ namespace MusicBeePlugin.Form.Configure
             _username = _settings.GetFromKey("username");
 
             textbox_username.Text = _username;
-            picbox_pfp.Image = Image.FromFile(_filePath);
+
+            try
+            {
+                picbox_pfp.Image = Image.FromFile(_filePath);
+            }
+            catch (FileNotFoundException exception)
+            {
+                new Form_Popup($"The file {exception.Message} was not found.", "File not found");
+                _settings.SetFromKey("pfpPath", string.Empty);
+            }
         }
 
         private void button_submit_Click(object sender, EventArgs e)
@@ -56,6 +64,8 @@ namespace MusicBeePlugin.Form.Configure
             _settings.SetFromKey("username",_username);
             
             Close();
+            
+            Plugin.FormControlMain.Invalidate();
         }
         
         
@@ -114,6 +124,13 @@ namespace MusicBeePlugin.Form.Configure
                 }
             }
             return false;
+        }
+
+        private void button_about_Click(object sender, EventArgs e)
+        {
+            Plugin.PluginInfo pluginAbout = Plugin.About;
+            
+            new Form_Popup($"Plugin Title: {pluginAbout.Name}\nAuthor: {pluginAbout.Author}\nVersion: {pluginAbout.VersionMajor}.{pluginAbout.VersionMinor}.{pluginAbout.Revision}", "About");
         }
     }
 }

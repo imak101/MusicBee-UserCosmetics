@@ -29,7 +29,7 @@ namespace MusicBeePlugin
             var writer = File.AppendText(_filePath); writer.Write("<body></body>"); writer.Close();
             
             _xmlDoc.Load(_filePath);
-            var dec = _xmlDoc.CreateXmlDeclaration("1.0", "utf-8", null);
+            XmlDeclaration dec = _xmlDoc.CreateXmlDeclaration("1.0", "utf-8", null);
             _xmlDoc.InsertBefore(dec, _xmlDoc.DocumentElement);
 
             for (int i = 0; i < keys.Length; i++)
@@ -45,7 +45,7 @@ namespace MusicBeePlugin
         
         public string GetFromKey(string key)
         {
-            XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key); //TODO: could be made more dynamic
+            XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key); //TODO: could be made more dynamic ...?
 
             if (nodeList.Count > 0)
             {
@@ -66,7 +66,7 @@ namespace MusicBeePlugin
                 return;
             }
             
-            new Form_Popup("Key '" + key + "' not found.", "SetFromKey Error"); // TODO: INTERPOLATE
+            new Form_Popup($"Key '{key}' not found.", "SetFromKey Error");
         }
 
 

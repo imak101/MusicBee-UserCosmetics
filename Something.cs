@@ -3,11 +3,11 @@ using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Configuration;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Media;
-using System.Xml;
+using System.Threading;
 using MusicBeePlugin.Form.Configure;
 using MusicBeePlugin.Form.Popup;
 
@@ -17,6 +17,8 @@ namespace MusicBeePlugin
     {
         private MusicBeeApiInterface _mbApiInterface;
         private PluginInfo _about = new PluginInfo();
+        private PluginSettings _settings;
+        private PaintManager _paintManager;
         
         public PluginInfo Initialise(IntPtr apiInterfacePtr)
         {
@@ -30,13 +32,17 @@ namespace MusicBeePlugin
             _about.TargetApplication = "User";   //  the name of a Plugin Storage device or panel header for a dockable panel
             _about.Type = PluginType.General;
             _about.VersionMajor = 0;  // your plugin version
-            _about.VersionMinor = 0;
-            _about.Revision = 1;
+            _about.VersionMinor = 1;
+            _about.Revision = 0;
             _about.MinInterfaceVersion = MinInterfaceVersion;
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             _about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
+            About = _about;
             
+            _settings = new PluginSettings(ref _mbApiInterface);
+            _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
+
             return _about;
         }
 
@@ -59,9 +65,9 @@ namespace MusicBeePlugin
                 configPanel.Controls.AddRange(new Control[] { prompt, textBox });
             }
 
-            var settings = new PluginSettings(ref _mbApiInterface);
+            //var settings = new PluginSettings(ref _mbApiInterface);
 
-            Form_Configure form = new Form_Configure(ref settings);
+            Form_Configure form = new Form_Configure(ref _settings);
             
             if (form.CheckOpened("User Account"))
             {
@@ -75,7 +81,20 @@ namespace MusicBeePlugin
             
             return true;
         }
-       
+
+        private static PluginInfo _About;
+
+        private static void SetAbout(ref PluginInfo about)
+        {
+            _About = about;
+        }
+
+        public static PluginInfo About
+        {
+            get => _About;
+            private set => SetAbout(ref value);
+        }
+
         // called by MusicBee when the user clicks Apply or Save in the MusicBee Preferences screen.
         // its up to you to figure out whether anything has changed and needs updating
         public void SaveSettings() {}
@@ -143,6 +162,20 @@ namespace MusicBeePlugin
         //  you can add your own controls to the panel if needed
         //  you can control the scrollable area of the panel using the mbApiInterface.MB_SetPanelScrollableArea function
         //  to set a MusicBee header for the panel, set about.TargetApplication in the Initialise function above to the panel header text
+        private static Control _formControlMain;
+
+        public static Control FormControlMain
+        {
+            get => _formControlMain;
+            private set => _formControlMain = SetControl(ref value);
+        }
+
+        private static Control SetControl(ref Control panel)
+        {
+            _formControlMain = panel;
+            return _formControlMain;
+        }
+        
         public int OnDockablePanelCreated(Control panel)
         {
           //    return the height of the panel and perform any initialisation here
@@ -156,26 +189,30 @@ namespace MusicBeePlugin
                 dpiScaling = g.DpiY / 96f;
             }
             panel.Paint += panel_Paint;
+            // panel.MouseClick += panel_click; // TODO: remove
+            FormControlMain = panel;
             return Convert.ToInt32(100 * dpiScaling);
+        }
+
+        private void panel_click(object sender, MouseEventArgs e)
+        {
+            new Form_Popup($"X: {e.X} Y:{e.Y}", "cords"); // for debug
         }
 
         private void panel_Paint(object sender, PaintEventArgs e)
         {
+            _paintManager.SetArgs(ref e);
             
-           // _mbApiInterface.Setting_GetSkinElementColour.Invoke(SkinElement d);
-           
-            
-            e.Graphics.Clear(Color.Blue);
-            TextRenderer.DrawText(e.Graphics, "uwu", SystemFonts.CaptionFont, new Point(10, 10), Color.Blue);
+            _paintManager.MainPainter();
         }
 
         // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
         // return the list of ToolStripMenuItems that will be displayed
-        public List<ToolStripItem> GetHeaderMenuItems()
-        {
-            List<ToolStripItem> list = new List<ToolStripItem>();
-            list.Add(new ToolStripMenuItem("A menu item"));
-            return list;
-        }
+        // public List<ToolStripItem> GetHeaderMenuItems()
+        // {
+        //     List<ToolStripItem> list = new List<ToolStripItem>();
+        //     list.Add(new ToolStripMenuItem("A menu item"));
+        //     return list;
+        // }
     }
 }
