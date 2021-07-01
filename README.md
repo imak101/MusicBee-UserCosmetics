@@ -18,13 +18,13 @@ This plugin's current state is functional and stable enough to be released as an
 
 # Screenshots (as of v0.1.2)
 
-#####The main panel
+##### The main panel
 ![PanelZoom](Images/PanelZoom.png)
 
-#####The panel on the top right of the main view
+##### The panel on the top right of the main view
 ![MainView](Images/MainView.png)
 
-###Dark mode
+### Dark mode
 
 ![PanelZoomDark](Images/PanelZoomDark.png)
 
