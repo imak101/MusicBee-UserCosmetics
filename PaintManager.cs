@@ -84,8 +84,9 @@ namespace MusicBeePlugin
         {
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
-        
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+            
+            destImage.SetResolution(image.HorizontalResolution >= 72? 95 : image.HorizontalResolution, image.VerticalResolution >= 72? 95 : image.VerticalResolution);
+            //destImage.SetResolution(image.HorizontalResolution,image.VerticalResolution); TODO: Remove if above solution suffices
         
             using (var graphics = Graphics.FromImage(destImage))
             {
