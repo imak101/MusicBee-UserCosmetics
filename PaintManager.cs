@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
 using MusicBeePlugin.Form.Popup;
 
@@ -13,6 +14,8 @@ namespace MusicBeePlugin
         private PaintEventArgs _eventArgs;
         private readonly Plugin.MusicBeeApiInterface _mbAPI;
         private readonly PluginSettings _settings;
+
+        private static readonly Size _pfpSize = new Size(60,60);
 
         private Color _bgColor;
         private Color _fgColor;
@@ -27,6 +30,8 @@ namespace MusicBeePlugin
         private Image _pfp;
 
         private Control _controlMain;
+
+        private bool _drawRounded;
         
         public PaintManager(ref Plugin.MusicBeeApiInterface mbAPI, ref PluginSettings settings)
         {
@@ -34,7 +39,7 @@ namespace MusicBeePlugin
             _settings = settings;
 
             SetColorsFromSkin();
-            SetCredentials();
+            LoadSettings();
 
         }
 
@@ -49,17 +54,19 @@ namespace MusicBeePlugin
             _fgColor = Color.FromArgb(_mbAPI.Setting_GetSkinElementColour.Invoke(Plugin.SkinElement.SkinSubPanel,Plugin.ElementState.ElementStateDefault,Plugin.ElementComponent.ComponentForeground));
         }
 
-        private void SetCredentials()
+        private void LoadSettings()
         {
             _pfpPath = _settings.GetFromKey("pfpPath");
             _username = _settings.GetFromKey("username");
+            
+            _drawRounded = Convert.ToBoolean(_settings.GetFromKey("roundPfpCheck"));
         }
 
         public void MainPainter()
         {
             _oldPfpPath = _pfpPath;
-            SetCredentials();
-            
+            LoadSettings();
+
             _eventArgs.Graphics.Clear(_bgColor);
 
             CalculateCenter_Point();
@@ -72,9 +79,14 @@ namespace MusicBeePlugin
         {
             string currentPath = _pfpPath;
 
-            if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath)
+            if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || !_drawRounded)
             {
-                _pfp = ResizeImage(Image.FromFile(_pfpPath), 60, 60);
+                _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width, _pfpSize.Height);
+            }
+
+            if (_drawRounded)
+            {
+                if ((string)_pfp.Tag != currentPath) return _pfp = ApplyRoundCorners();
             }
             
             return _pfp;
@@ -106,13 +118,56 @@ namespace MusicBeePlugin
             return destImage;
         }
 
+
+        private Bitmap ApplyRoundCorners()
+        {
+            Rectangle plaster = new Rectangle(0, 0, _pfpSize.Width, _pfpSize.Height);
+            Bitmap pfpBmp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width,_pfpSize.Height);
+            Bitmap targetBmp = new Bitmap(_pfpSize.Width, _pfpSize.Height);
+
+            
+            Point pPlasterCenterRelative = new Point(plaster.Width / 2, plaster.Height / 2);
+            Point pImageCenterRelative = new Point(pfpBmp.Width / 2, pfpBmp.Height / 2);
+            Point pOffSetRelative = new Point(pPlasterCenterRelative.X - pImageCenterRelative.X, pPlasterCenterRelative.Y - pImageCenterRelative.Y);
+
+            Point xAbsolutePixel = pOffSetRelative + new Size(plaster.Location); //Find the absolute location
+
+            using (Graphics graphics = Graphics.FromImage(targetBmp))
+            {
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    using (TextureBrush texture = new TextureBrush(pfpBmp, WrapMode.Clamp))
+                    {
+                        graphics.CompositingMode = CompositingMode.SourceCopy;
+                        graphics.CompositingQuality = CompositingQuality.HighQuality;
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        graphics.SmoothingMode = SmoothingMode.HighQuality;
+                        graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                        
+                        graphics.FillRectangle(new SolidBrush(_bgColor), plaster);
+
+                        texture.TranslateTransform(xAbsolutePixel.X, xAbsolutePixel.Y);
+                        
+                        path.AddEllipse(plaster);
+                        graphics.FillEllipse(texture, plaster);
+
+                        path.CloseFigure();
+                        
+                        targetBmp.Tag = _pfpPath;
+
+                        return targetBmp;
+                    }
+                }
+            }
+        }
+
         private void CalculateCenter_Point()
         {
             _controlMain = Plugin.FormControlMain;
             
             if (_pfp == null)
             {
-                ImageHandler();
+                _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width,_pfpSize.Height);
             }
             
             _pfpPoint.X = _controlMain.Size.Width / 2 - _pfp.Width / 2;

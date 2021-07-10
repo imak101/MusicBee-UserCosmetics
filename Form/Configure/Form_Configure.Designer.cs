@@ -41,6 +41,7 @@ namespace MusicBeePlugin.Form.Configure
             this.button_cancel = new System.Windows.Forms.Button();
             this.openFileDialog_pfp = new System.Windows.Forms.OpenFileDialog();
             this.button_about = new System.Windows.Forms.Button();
+            this.checkBox_roundPfp = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).BeginInit();
             this.SuspendLayout();
             // 
@@ -128,11 +129,22 @@ namespace MusicBeePlugin.Form.Configure
             this.button_about.UseVisualStyleBackColor = true;
             this.button_about.Click += new System.EventHandler(this.button_about_Click);
             // 
+            // checkBox_roundPfp
+            // 
+            this.checkBox_roundPfp.Location = new System.Drawing.Point(218, 274);
+            this.checkBox_roundPfp.Name = "checkBox_roundPfp";
+            this.checkBox_roundPfp.Size = new System.Drawing.Size(134, 40);
+            this.checkBox_roundPfp.TabIndex = 8;
+            this.checkBox_roundPfp.Text = "Round picture\'s edges\r\n";
+            this.checkBox_roundPfp.UseVisualStyleBackColor = true;
+            this.checkBox_roundPfp.CheckedChanged += new System.EventHandler(this.checkBox_roundPfp_CheckedChanged);
+            // 
             // Form_Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 316);
+            this.Controls.Add(this.checkBox_roundPfp);
             this.Controls.Add(this.button_about);
             this.Controls.Add(this.button_cancel);
             this.Controls.Add(this.button_submit);
@@ -152,6 +164,8 @@ namespace MusicBeePlugin.Form.Configure
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.CheckBox checkBox_roundPfp;
+        
         private System.Windows.Forms.Button button_about;
 
         private System.Windows.Forms.OpenFileDialog openFileDialog_pfp;

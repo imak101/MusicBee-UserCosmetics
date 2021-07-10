@@ -23,7 +23,7 @@ namespace MusicBeePlugin
 
         private void FirstTimeSetup()
         {
-            string[] keys = {"pfpPath", "username"};
+            string[] keys = {"pfpPath", "username", "roundPfpCheck"};
             
             File.Create(_filePath).Close();
             var writer = File.AppendText(_filePath); writer.Write("<body></body>"); writer.Close();
@@ -55,7 +55,7 @@ namespace MusicBeePlugin
             return null;
         }
         
-        public void SetFromKey(string key, string value)
+        public void SetFromKey(string key, string value, bool safety = false) // safety indicates that the key may not exist already (due to versioning) and will have to be appended 
         {
             XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key);
 
@@ -65,8 +65,19 @@ namespace MusicBeePlugin
                 _xmlDoc.Save(_filePath);
                 return;
             }
+
+            if (safety)
+            {
+                XmlElement newKey = _xmlDoc.CreateElement(key);
+                XmlText emptyS = _xmlDoc.CreateTextNode(string.Empty);
+                newKey.AppendChild(emptyS);
+                _xmlDoc.DocumentElement.AppendChild(newKey);
+                
+                SetFromKey(key,value);
+                return;
+            }
             
-            new Form_Popup($"Key '{key}' not found.", "SetFromKey Error");
+            new Form_Popup($"Key '{key}' not found. This program's version may be outdated, please make sure that you are up to date with the GitHub repository.", "SetFromKey Error");
         }
 
 

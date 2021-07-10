@@ -10,8 +10,8 @@ namespace MusicBeePlugin.Form.Configure
     public partial class Form_Configure : System.Windows.Forms.Form
     {
         private string _filePath = string.Empty;
-        private string _fileName = string.Empty; // unneeded?
         private string _username = string.Empty;
+        private bool _roundPfpChecked;
         private PluginSettings _settings;
 
 
@@ -29,7 +29,9 @@ namespace MusicBeePlugin.Form.Configure
             }
             _filePath = _settings.GetFromKey("pfpPath");
             _username = _settings.GetFromKey("username");
+            _roundPfpChecked = Convert.ToBoolean(_settings.GetFromKey("roundPfpCheck"));
 
+            checkBox_roundPfp.Checked = _roundPfpChecked;
             textbox_username.Text = _username;
 
             try
@@ -88,7 +90,6 @@ namespace MusicBeePlugin.Form.Configure
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _filePath = dialog.FileName;
-                    _fileName = dialog.SafeFileName;
                     
                     var picStream = dialog.OpenFile(); // ONLY PictureBoxSizeMode.Zoom WORKS
 
@@ -104,7 +105,6 @@ namespace MusicBeePlugin.Form.Configure
                         SystemSounds.Asterisk.Play();
 
                         _filePath = string.Empty;
-                        _fileName = string.Empty;
 
                         picbox_pfp.Image = null;
                         
@@ -138,6 +138,11 @@ namespace MusicBeePlugin.Form.Configure
             Plugin.PluginInfo pluginAbout = Plugin.About;
             
             new Form_Popup($"Plugin Title: {pluginAbout.Name}\nAuthor: {pluginAbout.Author}\nVersion: {pluginAbout.VersionMajor}.{pluginAbout.VersionMinor}.{pluginAbout.Revision}", "About");
+        }
+
+        private void checkBox_roundPfp_CheckedChanged(object sender, EventArgs e)
+        {
+            _settings.SetFromKey("roundPfpCheck", checkBox_roundPfp.Checked.ToString(), true); // TODO: SAFETY KEY, REMOVE NEXT VERSION INCREMENT
         }
     }
 }
