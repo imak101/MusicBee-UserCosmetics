@@ -81,7 +81,6 @@ namespace MusicBeePlugin.Form.Configure
             this.button_pfp.Text = "Upload Picture";
             this.button_pfp.UseVisualStyleBackColor = true;
             this.button_pfp.Click += new System.EventHandler(this.button_pfp_Click);
-            this.button_pfp.DragDrop += new System.Windows.Forms.DragEventHandler(this.button_pfp_DragDrop);
             // 
             // picbox_pfp
             // 
@@ -98,7 +97,7 @@ namespace MusicBeePlugin.Form.Configure
             this.button_submit.Name = "button_submit";
             this.button_submit.Size = new System.Drawing.Size(90, 40);
             this.button_submit.TabIndex = 5;
-            this.button_submit.Text = "Submit";
+            this.button_submit.Text = "Apply";
             this.button_submit.UseVisualStyleBackColor = true;
             this.button_submit.Click += new System.EventHandler(this.button_submit_Click);
             // 

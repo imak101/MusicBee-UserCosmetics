@@ -114,11 +114,6 @@ namespace MusicBeePlugin.Form.Configure
             }
         }
 
-        private void button_pfp_DragDrop(object sender, DragEventArgs e)
-        {
-            throw new System.NotImplementedException();
-        }
-        
         public bool CheckOpened(string name)
         {
             FormCollection fc = Application.OpenForms;

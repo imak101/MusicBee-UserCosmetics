@@ -58,8 +58,16 @@ namespace MusicBeePlugin
         {
             _pfpPath = _settings.GetFromKey("pfpPath");
             _username = _settings.GetFromKey("username");
-            
-            _drawRounded = Convert.ToBoolean(_settings.GetFromKey("roundPfpCheck"));
+
+            try
+            {
+                _drawRounded = Convert.ToBoolean(_settings.GetFromKey("roundPfpCheck"));
+            }
+            catch (FormatException)
+            {
+                _settings.SetFromKey("roundPfpCheck", false.ToString(), true); //TODO: safety key
+                _drawRounded = false;
+            }
         }
 
         public void MainPainter()
@@ -86,7 +94,7 @@ namespace MusicBeePlugin
 
             if (_drawRounded)
             {
-                if ((string)_pfp.Tag != currentPath) return _pfp = ApplyRoundCorners();
+                if ((string)_pfp.Tag != currentPath) _pfp = ApplyRoundCorners();
             }
             
             return _pfp;
@@ -102,7 +110,7 @@ namespace MusicBeePlugin
         
             using (var graphics = Graphics.FromImage(destImage))
             {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingMode = CompositingMode.SourceOver;
                 graphics.CompositingQuality = CompositingQuality.HighQuality;
                 graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
@@ -138,7 +146,7 @@ namespace MusicBeePlugin
                 {
                     using (TextureBrush texture = new TextureBrush(pfpBmp, WrapMode.Clamp))
                     {
-                        graphics.CompositingMode = CompositingMode.SourceCopy;
+                        graphics.CompositingMode = CompositingMode.SourceOver;
                         graphics.CompositingQuality = CompositingQuality.HighQuality;
                         graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                         graphics.SmoothingMode = SmoothingMode.HighQuality;

@@ -7,13 +7,14 @@ This plugin's current state is functional and stable enough to be released as an
 # Features
 
 - Add a picture and username to be displayed in an individual panel
+- Option to round picture's corners
 
 ### TODO
 
-- Add border options for profile picture
 - Add additional positioning options for username and picture
 - Add custom color option for back and foreground
 - Add greeting options
+- Add GIF support(?)
 - And more...
 
 # Screenshots (as of v0.1.2)

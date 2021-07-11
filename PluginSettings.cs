@@ -43,6 +43,9 @@ namespace MusicBeePlugin
             _xmlDoc.Save(_filePath);
         }
         
+        /// <returns>
+        /// Null if key was not found.
+        /// </returns>
         public string GetFromKey(string key)
         {
             XmlNodeList nodeList = _xmlDoc.DocumentElement.GetElementsByTagName(key); //TODO: could be made more dynamic ...?

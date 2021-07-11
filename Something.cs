@@ -31,7 +31,7 @@ namespace MusicBeePlugin
             _about.Description = "Add a user account with a username and profile picture.";
             _about.Author = "imak101";
             _about.TargetApplication = "User";   //  the name of a Plugin Storage device or panel header for a dockable panel
-            _about.Type = PluginType.General;
+            _about.Type = PluginType.PanelView;
             _about.VersionMajor = 0;  // your plugin version
             _about.VersionMinor = 1;
             _about.Revision = 2;
@@ -43,6 +43,9 @@ namespace MusicBeePlugin
             
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
+            
+            _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
+
 
             return _about;
         }
@@ -65,9 +68,7 @@ namespace MusicBeePlugin
                 textBox.Bounds = new Rectangle(70, 0, 100, textBox.Height);
                 configPanel.Controls.AddRange(new Control[] { prompt, textBox });
             }
-
-            //var settings = new PluginSettings(ref _mbApiInterface);
-
+            
             Form_Configure form = new Form_Configure(ref _settings);
             
             if (form.CheckOpened("User Account"))
@@ -206,7 +207,7 @@ namespace MusicBeePlugin
             
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
             e.Graphics.CompositingQuality = CompositingQuality.HighQuality;
-            e.Graphics.CompositingMode = CompositingMode.SourceCopy;
+            e.Graphics.CompositingMode = CompositingMode.SourceOver;
             e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
             e.Graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
             
@@ -217,8 +218,7 @@ namespace MusicBeePlugin
         // return the list of ToolStripMenuItems that will be displayed
         // public List<ToolStripItem> GetHeaderMenuItems()
         // {
-        //     List<ToolStripItem> list = new List<ToolStripItem>();
-        //     list.Add(new ToolStripMenuItem("A menu item"));
+        //     List<ToolStripItem> list = new List<ToolStripItem> {new ToolStripMenuItem("Configure"), new ToolStripLabel("")};
         //     return list;
         // }
     }
