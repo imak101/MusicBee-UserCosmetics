@@ -132,10 +132,10 @@
   <!--  <Target Name="BeforeBuild">-->
   <!--  </Target>-->
   <Target Name="AfterBuild">
-    <!--    <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
+        <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />
     <!--    <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll.config" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
     <!--    <Delete Files="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\AppData\mb_Something1.xml" />-->
 <!--    <Copy SourceFiles="F:\Code\MusicBeePlugin\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="F:\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
-    <Copy SourceFiles="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />
+<!--    <Copy SourceFiles="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
   </Target>
 </Project>

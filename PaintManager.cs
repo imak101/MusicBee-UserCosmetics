@@ -80,7 +80,7 @@ namespace MusicBeePlugin
             CalculateCenter_Point();
             
             TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
-            _eventArgs.Graphics.DrawImage(ImageHandler(), _pfpPoint);
+            _eventArgs.Graphics.DrawImage(ImageHandler(),_pfpPoint);
         }
 
         private Image ImageHandler()
@@ -105,9 +105,10 @@ namespace MusicBeePlugin
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
             
-            destImage.SetResolution(image.HorizontalResolution >= 72? 95 : image.HorizontalResolution, image.VerticalResolution >= 72? 95 : image.VerticalResolution);
-            //destImage.SetResolution(image.HorizontalResolution,image.VerticalResolution); TODO: Remove if above solution suffices
-        
+            //destImage.SetResolution(image.HorizontalResolution >= 72? 95 : image.HorizontalResolution, image.VerticalResolution >= 72? 95 : image.VerticalResolution);
+            //destImage.SetResolution(image.HorizontalResolution,image.VerticalResolution); //TODO: Remove if above solution suffices
+            destImage.SetResolution(96,96);
+            
             using (var graphics = Graphics.FromImage(destImage))
             {
                 graphics.CompositingMode = CompositingMode.SourceOver;
@@ -125,7 +126,6 @@ namespace MusicBeePlugin
         
             return destImage;
         }
-
 
         private Bitmap ApplyRoundCorners()
         {
@@ -162,6 +162,74 @@ namespace MusicBeePlugin
                         path.CloseFigure();
                         
                         targetBmp.Tag = _pfpPath;
+
+                        return targetBmp;
+                    }
+                }
+            }
+        }
+
+        public static Bitmap P_ResizeImage(Bitmap image, int width, int height)
+        {
+            Rectangle destRect = new Rectangle(0, 0, width, height);
+            Bitmap destImage = new Bitmap(width, height);
+            
+            destImage.SetResolution(image.HorizontalResolution >= 72? 95 : image.HorizontalResolution, image.VerticalResolution >= 72? 95 : image.VerticalResolution);
+            
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+        
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width,image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+            destImage.Tag = image.Tag;
+            
+            return destImage;
+        }
+
+        public static Bitmap P_ApplyRoundedCorners(Bitmap image, int width, int height)
+        {
+            Rectangle plaster = new Rectangle(0, 0, width, height);
+            Bitmap pfpBmp = P_ResizeImage(image, width, height);
+            Bitmap targetBmp = new Bitmap(width, height);
+
+            
+            Point pPlasterCenterRelative = new Point(plaster.Width / 2, plaster.Height / 2);
+            Point pImageCenterRelative = new Point(pfpBmp.Width / 2, pfpBmp.Height / 2);
+            Point pOffSetRelative = new Point(pPlasterCenterRelative.X - pImageCenterRelative.X, pPlasterCenterRelative.Y - pImageCenterRelative.Y);
+
+            Point xAbsolutePixel = pOffSetRelative + new Size(plaster.Location); //Find the absolute location
+
+            using (Graphics graphics = Graphics.FromImage(targetBmp))
+            {
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    using (TextureBrush texture = new TextureBrush(pfpBmp, WrapMode.Clamp))
+                    {
+                        graphics.CompositingMode = CompositingMode.SourceOver;
+                        graphics.CompositingQuality = CompositingQuality.HighQuality;
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        graphics.SmoothingMode = SmoothingMode.HighQuality;
+                        graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                        
+                        graphics.FillRectangle(new SolidBrush(SystemColors.Menu), plaster);
+
+                        texture.TranslateTransform(xAbsolutePixel.X, xAbsolutePixel.Y);
+                        
+                        path.AddEllipse(plaster);
+                        graphics.FillEllipse(texture, plaster);
+
+                        path.CloseFigure();
+                        
+                        targetBmp.Tag = image.Tag;
 
                         return targetBmp;
                     }
