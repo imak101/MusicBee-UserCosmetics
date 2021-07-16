@@ -136,34 +136,7 @@ namespace MusicBeePlugin
             }
         }
 
-        // return an array of lyric or artwork provider names this plugin supports
-        // the providers will be iterated through one by one and passed to the RetrieveLyrics/ RetrieveArtwork function in order set by the user in the MusicBee Tags(2) preferences screen until a match is found
-        //public string[] GetProviders()
-        //{
-        //    return null;
-        //}
 
-        // return lyrics for the requested artist/title from the requested provider
-        // only required if PluginType = LyricsRetrieval
-        // return null if no lyrics are found
-        //public string RetrieveLyrics(string sourceFileUrl, string artist, string trackTitle, string album, bool synchronisedPreferred, string provider)
-        //{
-        //    return null;
-        //}
-
-        // return Base64 string representation of the artwork binary data from the requested provider
-        // only required if PluginType = ArtworkRetrieval
-        // return null if no artwork is found
-        //public string RetrieveArtwork(string sourceFileUrl, string albumArtist, string album, string provider)
-        //{
-        //    //Return Convert.ToBase64String(artworkBinaryData)
-        //    return null;
-        //}
-
-        //  presence of this function indicates to MusicBee that this plugin has a dockable panel. MusicBee will create the control and pass it as the panel parameter
-        //  you can add your own controls to the panel if needed
-        //  you can control the scrollable area of the panel using the mbApiInterface.MB_SetPanelScrollableArea function
-        //  to set a MusicBee header for the panel, set about.TargetApplication in the Initialise function above to the panel header text
         private static Control _formControlMain;
 
         public static Control FormControlMain
@@ -191,14 +164,8 @@ namespace MusicBeePlugin
                 dpiScaling = g.DpiY / 96f;
             }
             panel.Paint += panel_Paint;
-            // panel.MouseClick += panel_click; // TODO: remove
             FormControlMain = panel;
             return Convert.ToInt32(100 * dpiScaling);
-        }
-
-        private void panel_click(object sender, MouseEventArgs e)
-        {
-            new Form_Popup($"X: {e.X} Y:{e.Y}", "cords"); // for debug
         }
 
         private void panel_Paint(object sender, PaintEventArgs e)
@@ -215,11 +182,12 @@ namespace MusicBeePlugin
         }
 
         // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
-        // return the list of ToolStripMenuItems that will be displayed
-        // public List<ToolStripItem> GetHeaderMenuItems()
-        // {
-        //     List<ToolStripItem> list = new List<ToolStripItem> {new ToolStripMenuItem("Configure"), new ToolStripLabel("")};
-        //     return list;
-        // }
+        // return the list of ToolStripItems that will be displayed
+        public List<ToolStripItem> GetMenuItems()
+        {
+            List<ToolStripItem> list = new List<ToolStripItem> {new ToolStripMenuItem("Configure")};
+            list[0].Click += (sender, args) => new Form_Configure(ref _settings).Show();
+            return list;
+        }
     }
 }
