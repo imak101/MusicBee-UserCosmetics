@@ -307,6 +307,11 @@ namespace MusicBeePlugin
             public short MinApiRevision;
             public ReceiveNotificationFlags ReceiveNotifications;
             public int ConfigurationPanelHeight;
+
+            public string VersionToString()
+            {
+                return $"{VersionMajor}.{VersionMinor}.{Revision}";
+            }
         }
 
         [Flags()]

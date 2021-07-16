@@ -162,7 +162,7 @@ namespace MusicBeePlugin.Form.Configure
             
             Plugin.PluginInfo pluginAbout = Plugin.About;
             
-            new Form_Popup($"Plugin Title: {pluginAbout.Name}\nAuthor: {pluginAbout.Author}\nVersion: {pluginAbout.VersionMajor}.{pluginAbout.VersionMinor}.{pluginAbout.Revision}", "About");
+            new Form_Popup($"Plugin Title: {pluginAbout.Name}\nAuthor: {pluginAbout.Author}\nVersion: {pluginAbout.VersionToString()}", "About");
         }
 
         private void checkBox_roundPfp_CheckedChanged(object sender, EventArgs e)
