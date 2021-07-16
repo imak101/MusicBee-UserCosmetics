@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Media;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MusicBeePlugin.Form.Popup;
 
@@ -12,6 +14,7 @@ namespace MusicBeePlugin.Form.Configure
         private string _filePath = string.Empty;
         private string _username = string.Empty;
         private bool _roundPfpChecked;
+        private static readonly Size _picBoxSize = new Size(200, 200); 
         private PluginSettings _settings;
 
 
@@ -33,16 +36,8 @@ namespace MusicBeePlugin.Form.Configure
 
             checkBox_roundPfp.Checked = _roundPfpChecked;
             textbox_username.Text = _username;
-
-            try
-            {
-                picbox_pfp.Image = Image.FromFile(_filePath);
-            }
-            catch (FileNotFoundException exception)
-            {
-                new Form_Popup($"The file {exception.Message} was not found.", "File not found");
-                _settings.SetFromKey("pfpPath", string.Empty);
-            }
+            
+            picbox_pfp.Image = ImageHandler();
         }
 
         private void button_submit_Click(object sender, EventArgs e)
@@ -91,13 +86,13 @@ namespace MusicBeePlugin.Form.Configure
                 {
                     _filePath = dialog.FileName;
                     
-                    var picStream = dialog.OpenFile(); // ONLY PictureBoxSizeMode.Zoom WORKS
+                    var picStream = dialog.OpenFile();
 
                     try
                     {
                         using (var picBitmap = new Bitmap(picStream))
                         {
-                            picbox_pfp.Image = Image.FromHbitmap(picBitmap.GetHbitmap());
+                            picBitmap.Tag = _filePath;
                         }
                     }
                     catch (ArgumentException)
@@ -105,13 +100,42 @@ namespace MusicBeePlugin.Form.Configure
                         SystemSounds.Asterisk.Play();
 
                         _filePath = string.Empty;
-
                         picbox_pfp.Image = null;
                         
                         new Form_Popup("This file is invalid. Your file's dimensions may be too large or not in valid .jpg or .png format.", "Error");
+                        return;
                     }
+
+                    picbox_pfp.Image = ImageHandler();
                 }
             }
+        }
+
+        private Image ImageHandler()
+        {
+            try
+            {
+                using (Bitmap pfp = new Bitmap(_filePath))
+                {
+                    if (_roundPfpChecked)
+                    {
+                        return PaintManager.P_ApplyRoundedCorners(pfp, _picBoxSize.Width, _picBoxSize.Height);
+                    }
+
+                    return PaintManager.P_ResizeImage(pfp, _picBoxSize.Width, _picBoxSize.Height);
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                new Form_Popup($"The file {e.Message} was not found.", "File not found");
+                _settings.SetFromKey("pfpPath", string.Empty);
+            }
+            catch (ArgumentException)
+            {
+                new Form_Popup("There was an error loading your profile. Please re-enter your details.", "Error");
+            }
+
+            return null;
         }
 
         public bool CheckOpened(string name)
@@ -130,6 +154,12 @@ namespace MusicBeePlugin.Form.Configure
 
         private void button_about_Click(object sender, EventArgs e)
         {
+            if (CheckOpened("About"))
+            {
+                SystemSounds.Asterisk.Play();
+                return;
+            }
+            
             Plugin.PluginInfo pluginAbout = Plugin.About;
             
             new Form_Popup($"Plugin Title: {pluginAbout.Name}\nAuthor: {pluginAbout.Author}\nVersion: {pluginAbout.VersionMajor}.{pluginAbout.VersionMinor}.{pluginAbout.Revision}", "About");
@@ -138,6 +168,11 @@ namespace MusicBeePlugin.Form.Configure
         private void checkBox_roundPfp_CheckedChanged(object sender, EventArgs e)
         {
             _settings.SetFromKey("roundPfpCheck", checkBox_roundPfp.Checked.ToString(), true); // TODO: SAFETY KEY, REMOVE NEXT VERSION INCREMENT
+            _roundPfpChecked = checkBox_roundPfp.Checked;
+
+            if (_filePath == string.Empty) return;
+
+            picbox_pfp.Image = ImageHandler();
         }
     }
 }
