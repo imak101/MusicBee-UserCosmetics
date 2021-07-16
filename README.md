@@ -2,7 +2,7 @@
 
 MusicBeeSomething1 is a [MusicBee](https://getmusicbee.com/) plugin that adds customizations options for the application. Mainly being a profile picture and username panel for the main player view, this plugin will also include various styling options for the said panel.
 
-This plugin's current state is functional and stable enough to be released as an alpha. The current features are very limited so please check back often for new additions! 
+This plugin's current state is functional and stable enough to be released as an alpha. The current features are limited so please check back often for new additions! 
 
 # Features
 
@@ -15,19 +15,33 @@ This plugin's current state is functional and stable enough to be released as an
 - Add custom color option for back and foreground
 - Add greeting options
 - Add GIF support(?)
+- Add auto updater/notifier  
 - And more...
 
-# Screenshots (as of v0.1.2)
+# Installation
 
-##### The main panel
-![PanelZoom](Images/PanelZoom.png)
+1. Navigate to MusicBee settings by pressing Ctrl+O (default hotkey)
+    - OR locate folder ```~/AppData/Roaming/MusicBee/Plugins/``` and place the DLL file there. Skip step 2.
+    
+2. Click on the Plugins tab on the bottom and then click "Add Plugin" on the top right. Select the DLL file.
+
+3. Enter the configuration menu by clicking "Configure..." under the "user account" section. Configure your profile.
+
+4. Follow the prompted directions. "Arrange Panels..." may be accessed under "MusicBee/View/Arrange Panels..."
+
+5. Locate "user account" under "available elements" and drag it to one of the highlighted options. (the location used for the screenshots is the topmost postion of "right sidebar")
+
+# Screenshots (as of v0.2.0)
+
+##### The main panel (with rounded corners)
+![PanelZoom](Images/PanelZoomDark.png)
 
 ##### The panel on the top right of the main view
-![MainView](Images/MainView.png)
+![MainView](Images/MainViewDark.png)
 
-### Dark mode
+### Light mode (with no rounded corners)
 
-![PanelZoomDark](Images/PanelZoomDark.png)
+![PanelZoomDark](Images/PanelZoom.png)
 
-![MainViewDark](Images/MainViewDark.png)
+![MainViewDark](Images/MainView.png)
 
