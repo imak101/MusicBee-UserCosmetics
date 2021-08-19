@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Something1")]
+[assembly: AssemblyTitle("mb_UserCosmetics")]
 [assembly: AssemblyDescription("A MusicBee plugin that adds personalizaion options such a profile picture")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("imak101")]
-[assembly: AssemblyProduct("Something1")]
-[assembly: AssemblyCopyright("Copyright © 2021")]
+[assembly: AssemblyProduct("mb_UserCosmetics")]
+[assembly: AssemblyCopyright("Copyright imak101© 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -8,7 +8,7 @@ namespace MusicBeePlugin.Updater.Form
 {
     public partial class Form_Updater : System.Windows.Forms.Form
     {
-        private const string _GHRepo = "https://github.com/imak101/MusicBeeSomething1";
+        private const string _GHRepo = "https://github.com/imak101/MusicBee-UserCosmetics";
 
         private GitHubRelease _GHRelease;
 

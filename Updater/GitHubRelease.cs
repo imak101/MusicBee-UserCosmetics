@@ -44,45 +44,19 @@ namespace MusicBeePlugin.Updater
                 string downloadUrl = await ParseResponseStringForValueFromKey("browser_download_url", true);
                 string urlDllName = Regex.Match(downloadUrl, "mb_[\\S]*").Value;
                 
-                // client.DownloadFile(new Uri ("https://github.com/imak101/MusicBeeSomething1/releases/download/v0.2.0/mb_Something1.dll"), pluginFolderPath + wwpp);
-                
                 client.DownloadFile(new Uri(await ParseResponseStringForValueFromKey("browser_download_url", true)), pluginFolderPath + urlDllName);
 
                 if (urlDllName != Plugin.About.ProjectName + ".dll")
                 {
-                    XmlDocument mbIni = new XmlDocument(); mbIni.Load(mbSettingsIniPath);
+                    var form = new MusicBeePlugin.Form.Popup.Form_Popup("A name-change has been detected for this release. You may need to re-add the plugin in the \"Arrange Panels\" setting.", "Warning");
 
+                    form.Disposed += (sender, args) => Application.Restart();
 
-                    try
-                    {
-                        XmlNodeList xmlEmu = mbIni.GetElementsByTagName("SystemPlugin").Item(0).ChildNodes;
-                        
-                        foreach (XmlNode systemPluginChild in xmlEmu)
-                        {
-                            foreach (XmlNode stateChild in systemPluginChild.ChildNodes)
-                            {
-                                if (stateChild.Name == "Id" && Regex.Match(stateChild.InnerText, $"{Plugin.About.ProjectName}.dll").Success)
-                                {
-                                    stateChild.InnerText = Path.Combine(pluginFolderPath, urlDllName);
-                                    
-                                    mbIni.Save(Path.Combine(Plugin.About.PersistentStoragePath, "MusicBee3Settings.ini"));
-
-                                    await Task.Delay(1000);
-                                    
-                                    //Program restarts and maybe edits the ini file as it restarts?? file not saving properly
-                                }
-                            }
-                        }
-                    }
-                    
-                    catch (Exception e)
-                    {
-                        new MusicBeePlugin.Form.Popup.Form_Popup("An error occured while installing the new update. Reinstalling MusicBee may fix the problem.", "Error");
-                    }
+                    await Task.Delay(50000);
                 }
-
-                //FileStream fileLock = new FileStream(mbSettingsIniPath, FileMode.Open, FileAccess.Read, FileShare.None);
-
+                
+                //TODO: gray out update button when update not needed, change setting file's name
+                
                 Application.Restart();
             }
         } 

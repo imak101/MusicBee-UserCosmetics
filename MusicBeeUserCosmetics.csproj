@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MusicBeePlugin</RootNamespace>
-    <AssemblyName>mb_Something1</AssemblyName>
+    <AssemblyName>mb_UserCosmetics</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -99,7 +99,7 @@
     <Compile Include="MusicBeeInterface.cs" />
     <Compile Include="PaintManager.cs" />
     <Compile Include="PluginSettings.cs" />
-    <Compile Include="Something.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Updater\ApiRequests.cs" />
     <Compile Include="Updater\Form\Form_Updater.cs">
@@ -147,7 +147,7 @@
   <!--  <Target Name="BeforeBuild">-->
   <!--  </Target>-->
   <Target Name="AfterBuild">
-        <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />
+        <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeUserCosmetics\bin\Debug\mb_UserCosmetics.dll" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />
     <!--    <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll.config" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
     <!--    <Delete Files="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\AppData\mb_Something1.xml" />-->
 <!--    <Copy SourceFiles="F:\Code\MusicBeePlugin\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="F:\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->

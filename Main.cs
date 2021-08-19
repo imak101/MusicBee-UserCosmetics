@@ -30,9 +30,9 @@ namespace MusicBeePlugin
             _mbApiInterface.Initialise(apiInterfacePtr);
             
             _about.PluginInfoVersion = PluginInfoVersion;
-            _about.ProjectName = "mb_Something1";
-            _about.Name = "User Account";
-            _about.Description = "Add a user account with a username and profile picture.";
+            _about.ProjectName = "mb_UserCosmetics";
+            _about.Name = "User Cosmetics";
+            _about.Description = "Add a user 'account' with a username and profile picture.";
             _about.Author = "imak101";
             _about.TargetApplication = "User";   //  the name of a Plugin Storage device or panel header for a dockable panel
             _about.Type = PluginType.PanelView;
@@ -62,26 +62,9 @@ namespace MusicBeePlugin
 
         public bool Configure(IntPtr panelHandle)
         {
-            // save any persistent settings in a sub-folder of this path
-            string dataPath = _mbApiInterface.Setting_GetPersistentStoragePath();
-            // panelHandle will only be set if you set about.ConfigurationPanelHeight to a non-zero value
-            // keep in mind the panel width is scaled according to the font the user has selected
-            // if about.ConfigurationPanelHeight is set to 0, you can display your own popup window
-            if (panelHandle != IntPtr.Zero)
-            {
-                Panel configPanel = (Panel)Panel.FromHandle(panelHandle);
-                Label prompt = new Label();
-                prompt.AutoSize = true;
-                prompt.Location = new Point(0, 0);
-                prompt.Text = "username:";
-                TextBox textBox = new TextBox();
-                textBox.Bounds = new Rectangle(70, 0, 100, textBox.Height);
-                configPanel.Controls.AddRange(new Control[] { prompt, textBox });
-            }
-            
             Form_Configure form = new Form_Configure(ref _settings, ref _mbApiInterface);
             
-            if (Form_Configure.CheckOpened("User Account"))
+            if (Form_Configure.CheckOpened("User Cosmetics Configuration"))
             {
                 SystemSounds.Asterisk.Play();
                 form.Close();
@@ -94,20 +77,6 @@ namespace MusicBeePlugin
             Form_Updater updater = new Form_Updater();
             updater.Owner = form;
             updater.Show();
-            
-            // ApiRequests apiRequests = new ApiRequests();
-            
-            // string x = async () => await apiRequests.res()
-            // async () => await Task<string>(new Func<string>(apiRequests.res()));
-            //_mbApiInterface.MB_CreateBackgroundTask.Invoke(new ThreadStart(async () => await apiRequests.res()),form);
-
-            //object x = new object();
-            //var s = _mbApiInterface.MB_CreateBackgroundTask.BeginInvoke(async () => await apiRequests.res(),form, new AsyncCallback(), x);
-            //_mbApiInterface.MB_CreateBackgroundTask.
-            //_mbApiInterface.MB_CreateBackgroundTask.EndInvoke(s);
-            
-           // apiRequests.present();
-
             
             return true;
         }

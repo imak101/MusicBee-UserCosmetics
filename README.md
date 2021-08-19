@@ -1,6 +1,6 @@
-﻿# MusicBeeSomething1 (title to change)
+﻿# MusicBee-UserCosmetics
 
-MusicBeeSomething1 is a [MusicBee](https://getmusicbee.com/) plugin that adds customizations options for the application. Mainly being a profile picture and username panel for the main player view, this plugin will also include various styling options for the said panel.
+MusicBee-UserCosmetics is a [MusicBee](https://getmusicbee.com/) plugin that adds customizations options for the application. Mainly being a profile picture and username panel for the main player view, this plugin will also include various styling options for the said panel.
 
 This plugin's current state is functional and stable enough to be released as an alpha. The current features are limited so please check back often for new additions! 
 
@@ -25,11 +25,11 @@ This plugin's current state is functional and stable enough to be released as an
     
 2. Click on the Plugins tab on the bottom and then click "Add Plugin" on the top right. Select the DLL file.
 
-3. Enter the configuration menu by clicking "Configure..." under the "user account" section. Configure your profile.
+3. Enter the configuration menu by clicking "Configure..." under the "user cosmetics" section. Configure your profile.
 
 4. Follow the prompted directions. "Arrange Panels..." may be accessed under "MusicBee/View/Arrange Panels..."
 
-5. Locate "user account" under "available elements" and drag it to one of the highlighted options. (the location used for the screenshots is the topmost postion of "right sidebar")
+5. Locate "user cosmetics" under "available elements" and drag it to one of the highlighted options. (the location used for the screenshots is the topmost postion of "right sidebar")
 
 # Screenshots (as of v0.2.0)
 

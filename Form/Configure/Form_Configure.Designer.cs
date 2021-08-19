@@ -168,7 +168,7 @@ namespace MusicBeePlugin.Form.Configure
             this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
             this.Name = "Form_Configure";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Text = "User Account";
+            this.Text = "User Cosmetics Configuration";
             this.Load += new System.EventHandler(this.Form_Configure_Load);
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).EndInit();
             this.ResumeLayout(false);

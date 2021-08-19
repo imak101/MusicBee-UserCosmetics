@@ -15,8 +15,8 @@ namespace MusicBeePlugin.Updater
     public abstract class ApiRequests
     {
         private readonly HttpClient _client = new HttpClient();
-        //private readonly Uri _uriReleases = new Uri("https://api.github.com/repos/imak101/MusicBeeSomething1/releases"); TODO: CHANGE REPO NAME
-        private readonly Uri _uriReleases = new Uri("http://127.0.0.1:5000/releases");
+        private readonly Uri _uriReleases = new Uri("https://api.github.com/repos/imak101/MusicBee-UserCosmetics/releases");
+        //private readonly Uri _uriReleases = new Uri("http://127.0.0.1:5000/releases");
 
         private string _currentResponse;
        
