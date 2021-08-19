@@ -295,6 +295,8 @@ namespace MusicBeePlugin
         public class PluginInfo
         {
             public short PluginInfoVersion;
+            public string PersistentStoragePath;
+            public string ProjectName;
             public PluginType Type;
             public string Name;
             public string Description;

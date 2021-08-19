@@ -6,6 +6,7 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MusicBeePlugin.Form.Popup;
+using MusicBeePlugin.Updater.Form;
 
 namespace MusicBeePlugin.Form.Configure
 {
@@ -16,11 +17,13 @@ namespace MusicBeePlugin.Form.Configure
         private bool _roundPfpChecked;
         private static readonly Size _picBoxSize = new Size(200, 200); 
         private PluginSettings _settings;
+        private Plugin.MusicBeeApiInterface _musicBeeApiInterface;
 
 
-        public Form_Configure(ref PluginSettings settings)
+        public Form_Configure(ref PluginSettings settings, ref Plugin.MusicBeeApiInterface mbInterface)
         {
             InitializeComponent();
+            _musicBeeApiInterface = mbInterface;
             _settings = settings;
         }
 
@@ -138,7 +141,7 @@ namespace MusicBeePlugin.Form.Configure
             return null;
         }
 
-        public bool CheckOpened(string name)
+        public static bool CheckOpened(string name)
         {
             FormCollection fc = Application.OpenForms;
 
@@ -173,6 +176,17 @@ namespace MusicBeePlugin.Form.Configure
             if (_filePath == string.Empty) return;
 
             picbox_pfp.Image = ImageHandler();
+        }
+
+        private void button_updater_Click(object sender, EventArgs e)
+        {
+            if (CheckOpened("Update Menu"))
+            {
+                SystemSounds.Asterisk.Play();
+                return;
+            }
+            
+            new Form_Updater().Show();
         }
     }
 }

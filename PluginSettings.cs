@@ -9,7 +9,7 @@ namespace MusicBeePlugin
     {
         private XmlDocument _xmlDoc = new XmlDocument();
         private Plugin.MusicBeeApiInterface _mbAPI;
-        private string _fileName = @"mb_Something1.xml"; // TODO: make dynamic
+        private string _fileName = $"mb_Something1.xml"; // TODO: make dynamic
         private string _filePath;
         
         public PluginSettings(ref Plugin.MusicBeeApiInterface mbAPI)

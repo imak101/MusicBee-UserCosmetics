@@ -9,8 +9,11 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Media;
 using System.Threading;
+using System.Threading.Tasks;
 using MusicBeePlugin.Form.Configure;
 using MusicBeePlugin.Form.Popup;
+using MusicBeePlugin.Updater.Form;
+using MusicBeePlugin.Updater;
 
 namespace MusicBeePlugin
 {
@@ -27,6 +30,7 @@ namespace MusicBeePlugin
             _mbApiInterface.Initialise(apiInterfacePtr);
             
             _about.PluginInfoVersion = PluginInfoVersion;
+            _about.ProjectName = "mb_Something1";
             _about.Name = "User Account";
             _about.Description = "Add a user account with a username and profile picture.";
             _about.Author = "imak101";
@@ -39,11 +43,17 @@ namespace MusicBeePlugin
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             _about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
+            _about.PersistentStoragePath = _mbApiInterface.Setting_GetPersistentStoragePath.Invoke();
             About = _about;
             
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
-            
+
+            if (File.Exists(Application.StartupPath + "/Plugins/old.dll"))
+            {
+                File.Delete(Application.StartupPath + "/Plugins/old.dll");
+            }
+
             _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
 
 
@@ -69,9 +79,9 @@ namespace MusicBeePlugin
                 configPanel.Controls.AddRange(new Control[] { prompt, textBox });
             }
             
-            Form_Configure form = new Form_Configure(ref _settings);
+            Form_Configure form = new Form_Configure(ref _settings, ref _mbApiInterface);
             
-            if (form.CheckOpened("User Account"))
+            if (Form_Configure.CheckOpened("User Account"))
             {
                 SystemSounds.Asterisk.Play();
                 form.Close();
@@ -80,6 +90,24 @@ namespace MusicBeePlugin
             }
             
             form.Show();
+            
+            Form_Updater updater = new Form_Updater();
+            updater.Owner = form;
+            updater.Show();
+            
+            // ApiRequests apiRequests = new ApiRequests();
+            
+            // string x = async () => await apiRequests.res()
+            // async () => await Task<string>(new Func<string>(apiRequests.res()));
+            //_mbApiInterface.MB_CreateBackgroundTask.Invoke(new ThreadStart(async () => await apiRequests.res()),form);
+
+            //object x = new object();
+            //var s = _mbApiInterface.MB_CreateBackgroundTask.BeginInvoke(async () => await apiRequests.res(),form, new AsyncCallback(), x);
+            //_mbApiInterface.MB_CreateBackgroundTask.
+            //_mbApiInterface.MB_CreateBackgroundTask.EndInvoke(s);
+            
+           // apiRequests.present();
+
             
             return true;
         }
@@ -107,9 +135,9 @@ namespace MusicBeePlugin
         }
 
         // uninstall this plugin - clean up any persisted files
-        public void Uninstall()
+        public static void Uninstall()
         {
-            File.Delete(_mbApiInterface.Setting_GetPersistentStoragePath.Invoke() + "mb_Something1.xml");
+            //File.Delete(_mbApiInterface.Setting_GetPersistentStoragePath.Invoke() + "mb_Something1.xml");
         }
 
         // receive event notifications from MusicBee
@@ -186,7 +214,7 @@ namespace MusicBeePlugin
         public List<ToolStripItem> GetMenuItems()
         {
             List<ToolStripItem> list = new List<ToolStripItem> {new ToolStripMenuItem("Configure")};
-            list[0].Click += (sender, args) => new Form_Configure(ref _settings).Show();
+            list[0].Click += (sender, args) => Configure(IntPtr.Zero);
             return list;
         }
     }
