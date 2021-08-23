@@ -22,6 +22,8 @@ namespace MusicBeePlugin.Updater.Form
 
         private async void Form_Updater_Load(object sender, EventArgs e)
         {
+            button_update.Enabled = false;
+            
             label_localVer.Text = $"Local Version:\nv{Plugin.About.VersionToString()}";
             
            _GHRelease = await new GitHubRelease().MakeGitHubReleaseAsync();
@@ -30,6 +32,7 @@ namespace MusicBeePlugin.Updater.Form
             
             VersionCompare(ref _GHRelease);
 
+            if (!_versionSame) button_update.Enabled = true;
         }
 
         private void VersionFiller(ref GitHubRelease release)
@@ -58,7 +61,6 @@ namespace MusicBeePlugin.Updater.Form
 
         private void link_GHCurrent_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-
             try
             {
                 TopMost = false;
@@ -110,6 +112,8 @@ namespace MusicBeePlugin.Updater.Form
 
         private async void button_update_Click(object sender, EventArgs e)
         {
+            button_update.Enabled = false;
+            
             await _GHRelease.DownloadLatest();
         }
     }
