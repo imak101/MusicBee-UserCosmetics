@@ -186,7 +186,12 @@ namespace MusicBeePlugin.Form.Configure
                 return;
             }
             
-            new Form_Updater().Show();
+            Form_Updater updater = new Form_Updater();
+
+            updater.StartPosition = FormStartPosition.CenterParent;
+            
+            updater.Show();
+
         }
     }
 }

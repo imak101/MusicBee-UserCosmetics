@@ -18,6 +18,7 @@ namespace MusicBeePlugin.Updater.Form
         public Form_Updater()
         {
             InitializeComponent();
+            CenterToParent();
         }
 
         private async void Form_Updater_Load(object sender, EventArgs e)
@@ -32,7 +33,7 @@ namespace MusicBeePlugin.Updater.Form
             
             VersionCompare(ref _GHRelease);
 
-            if (!_versionSame) button_update.Enabled = true;
+            if (!_versionSame && !_releaseFailed) button_update.Enabled = true;
         }
 
         private void VersionFiller(ref GitHubRelease release)
@@ -96,6 +97,12 @@ namespace MusicBeePlugin.Updater.Form
             {
                 label_verCompare.Text = $"Plugin '{Plugin.About.Name}' is up-to-date with the GitHub repo!";
                 _versionSame = true;
+                return;
+            }
+
+            if (_releaseFailed)
+            {
+                label_verCompare.Text = "Unable to fetch current version.";
                 return;
             }
 

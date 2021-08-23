@@ -71,12 +71,10 @@ namespace MusicBeePlugin
                 new Form_Popup("Configuration menu already open!", "Error");
                 return true;
             }
+
+            form.StartPosition = FormStartPosition.CenterScreen;
             
             form.Show();
-            
-            Form_Updater updater = new Form_Updater();
-            updater.Owner = form;
-            updater.Show();
             
             return true;
         }
