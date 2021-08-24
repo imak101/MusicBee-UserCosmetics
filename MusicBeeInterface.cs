@@ -295,6 +295,8 @@ namespace MusicBeePlugin
         public class PluginInfo
         {
             public short PluginInfoVersion;
+            public string PersistentStoragePath;
+            public string ProjectName;
             public PluginType Type;
             public string Name;
             public string Description;
@@ -307,6 +309,11 @@ namespace MusicBeePlugin
             public short MinApiRevision;
             public ReceiveNotificationFlags ReceiveNotifications;
             public int ConfigurationPanelHeight;
+
+            public string VersionToString()
+            {
+                return $"{VersionMajor}.{VersionMinor}.{Revision}";
+            }
         }
 
         [Flags()]

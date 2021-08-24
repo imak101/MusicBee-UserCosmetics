@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MusicBeePlugin</RootNamespace>
-    <AssemblyName>mb_Something1</AssemblyName>
+    <AssemblyName>mb_UserCosmetics</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -72,10 +72,14 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -95,8 +99,16 @@
     <Compile Include="MusicBeeInterface.cs" />
     <Compile Include="PaintManager.cs" />
     <Compile Include="PluginSettings.cs" />
-    <Compile Include="Something.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Updater\ApiRequests.cs" />
+    <Compile Include="Updater\Form\Form_Updater.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Updater\Form\Form_Updater.Designer.cs">
+      <DependentUpon>Form_Updater.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Updater\GitHubRelease.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -127,12 +139,15 @@
     <EmbeddedResource Include="Form\Popup\Form_Popup.resx">
       <DependentUpon>Form_Popup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Updater\Form\Form_Updater.resx">
+      <DependentUpon>Form_Updater.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!--  <Target Name="BeforeBuild">-->
   <!--  </Target>-->
   <Target Name="AfterBuild">
-        <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />
+        <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeUserCosmetics\bin\Debug\mb_UserCosmetics.dll" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />
     <!--    <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll.config" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
     <!--    <Delete Files="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\AppData\mb_Something1.xml" />-->
 <!--    <Copy SourceFiles="F:\Code\MusicBeePlugin\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="F:\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->

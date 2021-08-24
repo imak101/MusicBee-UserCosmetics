@@ -9,7 +9,9 @@ namespace MusicBeePlugin
     {
         private XmlDocument _xmlDoc = new XmlDocument();
         private Plugin.MusicBeeApiInterface _mbAPI;
-        private string _fileName = @"mb_Something1.xml"; // TODO: make dynamic
+        
+        private string _oldFileName = $"mb_Something1.xml"; // Previous project name 
+        private string _fileName = "mb_UserCosmetics.xml"; 
         private string _filePath;
         
         public PluginSettings(ref Plugin.MusicBeeApiInterface mbAPI)
@@ -23,6 +25,17 @@ namespace MusicBeePlugin
 
         private void FirstTimeSetup()
         {
+            string oldFilePath = _mbAPI.Setting_GetPersistentStoragePath.Invoke() + _oldFileName;
+            
+            if (File.Exists(oldFilePath))
+            {
+                File.Move(oldFilePath, _filePath);
+                File.Delete(oldFilePath);
+                _xmlDoc.Load(_filePath);
+                
+                return;
+            }
+
             string[] keys = {"pfpPath", "username", "roundPfpCheck"};
             
             File.Create(_filePath).Close();

@@ -9,8 +9,11 @@ using System.Drawing.Drawing2D;
 using System.IO;
 using System.Media;
 using System.Threading;
+using System.Threading.Tasks;
 using MusicBeePlugin.Form.Configure;
 using MusicBeePlugin.Form.Popup;
+using MusicBeePlugin.Updater.Form;
+using MusicBeePlugin.Updater;
 
 namespace MusicBeePlugin
 {
@@ -27,8 +30,9 @@ namespace MusicBeePlugin
             _mbApiInterface.Initialise(apiInterfacePtr);
             
             _about.PluginInfoVersion = PluginInfoVersion;
-            _about.Name = "User Account";
-            _about.Description = "Add a user account with a username and profile picture.";
+            _about.ProjectName = "mb_UserCosmetics";
+            _about.Name = "User Cosmetics";
+            _about.Description = "Add a user 'account' with a username and profile picture.";
             _about.Author = "imak101";
             _about.TargetApplication = "User";   //  the name of a Plugin Storage device or panel header for a dockable panel
             _about.Type = PluginType.PanelView;
@@ -39,11 +43,17 @@ namespace MusicBeePlugin
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             _about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
+            _about.PersistentStoragePath = _mbApiInterface.Setting_GetPersistentStoragePath.Invoke();
             About = _about;
             
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
-            
+
+            if (File.Exists(Application.StartupPath + "/Plugins/old.dll"))
+            {
+                File.Delete(Application.StartupPath + "/Plugins/old.dll");
+            }
+
             _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
 
 
@@ -52,32 +62,17 @@ namespace MusicBeePlugin
 
         public bool Configure(IntPtr panelHandle)
         {
-            // save any persistent settings in a sub-folder of this path
-            string dataPath = _mbApiInterface.Setting_GetPersistentStoragePath();
-            // panelHandle will only be set if you set about.ConfigurationPanelHeight to a non-zero value
-            // keep in mind the panel width is scaled according to the font the user has selected
-            // if about.ConfigurationPanelHeight is set to 0, you can display your own popup window
-            if (panelHandle != IntPtr.Zero)
-            {
-                Panel configPanel = (Panel)Panel.FromHandle(panelHandle);
-                Label prompt = new Label();
-                prompt.AutoSize = true;
-                prompt.Location = new Point(0, 0);
-                prompt.Text = "username:";
-                TextBox textBox = new TextBox();
-                textBox.Bounds = new Rectangle(70, 0, 100, textBox.Height);
-                configPanel.Controls.AddRange(new Control[] { prompt, textBox });
-            }
+            Form_Configure form = new Form_Configure(ref _settings, ref _mbApiInterface);
             
-            Form_Configure form = new Form_Configure(ref _settings);
-            
-            if (form.CheckOpened("User Account"))
+            if (Form_Configure.CheckOpened("User Cosmetics Configuration"))
             {
                 SystemSounds.Asterisk.Play();
                 form.Close();
                 new Form_Popup("Configuration menu already open!", "Error");
                 return true;
             }
+
+            form.StartPosition = FormStartPosition.CenterScreen;
             
             form.Show();
             
@@ -107,9 +102,9 @@ namespace MusicBeePlugin
         }
 
         // uninstall this plugin - clean up any persisted files
-        public void Uninstall()
+        public static void Uninstall()
         {
-            File.Delete(_mbApiInterface.Setting_GetPersistentStoragePath.Invoke() + "mb_Something1.xml");
+            //File.Delete(_mbApiInterface.Setting_GetPersistentStoragePath.Invoke() + "mb_Something1.xml");
         }
 
         // receive event notifications from MusicBee
@@ -136,34 +131,7 @@ namespace MusicBeePlugin
             }
         }
 
-        // return an array of lyric or artwork provider names this plugin supports
-        // the providers will be iterated through one by one and passed to the RetrieveLyrics/ RetrieveArtwork function in order set by the user in the MusicBee Tags(2) preferences screen until a match is found
-        //public string[] GetProviders()
-        //{
-        //    return null;
-        //}
 
-        // return lyrics for the requested artist/title from the requested provider
-        // only required if PluginType = LyricsRetrieval
-        // return null if no lyrics are found
-        //public string RetrieveLyrics(string sourceFileUrl, string artist, string trackTitle, string album, bool synchronisedPreferred, string provider)
-        //{
-        //    return null;
-        //}
-
-        // return Base64 string representation of the artwork binary data from the requested provider
-        // only required if PluginType = ArtworkRetrieval
-        // return null if no artwork is found
-        //public string RetrieveArtwork(string sourceFileUrl, string albumArtist, string album, string provider)
-        //{
-        //    //Return Convert.ToBase64String(artworkBinaryData)
-        //    return null;
-        //}
-
-        //  presence of this function indicates to MusicBee that this plugin has a dockable panel. MusicBee will create the control and pass it as the panel parameter
-        //  you can add your own controls to the panel if needed
-        //  you can control the scrollable area of the panel using the mbApiInterface.MB_SetPanelScrollableArea function
-        //  to set a MusicBee header for the panel, set about.TargetApplication in the Initialise function above to the panel header text
         private static Control _formControlMain;
 
         public static Control FormControlMain
@@ -191,14 +159,8 @@ namespace MusicBeePlugin
                 dpiScaling = g.DpiY / 96f;
             }
             panel.Paint += panel_Paint;
-            // panel.MouseClick += panel_click; // TODO: remove
             FormControlMain = panel;
             return Convert.ToInt32(100 * dpiScaling);
-        }
-
-        private void panel_click(object sender, MouseEventArgs e)
-        {
-            new Form_Popup($"X: {e.X} Y:{e.Y}", "cords"); // for debug
         }
 
         private void panel_Paint(object sender, PaintEventArgs e)
@@ -215,11 +177,12 @@ namespace MusicBeePlugin
         }
 
         // presence of this function indicates to MusicBee that the dockable panel created above will show menu items when the panel header is clicked
-        // return the list of ToolStripMenuItems that will be displayed
-        // public List<ToolStripItem> GetHeaderMenuItems()
-        // {
-        //     List<ToolStripItem> list = new List<ToolStripItem> {new ToolStripMenuItem("Configure"), new ToolStripLabel("")};
-        //     return list;
-        // }
+        // return the list of ToolStripItems that will be displayed
+        public List<ToolStripItem> GetMenuItems()
+        {
+            List<ToolStripItem> list = new List<ToolStripItem> {new ToolStripMenuItem("Configure")};
+            list[0].Click += (sender, args) => Configure(IntPtr.Zero);
+            return list;
+        }
     }
 }

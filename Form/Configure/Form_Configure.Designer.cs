@@ -42,6 +42,7 @@ namespace MusicBeePlugin.Form.Configure
             this.openFileDialog_pfp = new System.Windows.Forms.OpenFileDialog();
             this.button_about = new System.Windows.Forms.Button();
             this.checkBox_roundPfp = new System.Windows.Forms.CheckBox();
+            this.button_updater = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).BeginInit();
             this.SuspendLayout();
             // 
@@ -138,11 +139,22 @@ namespace MusicBeePlugin.Form.Configure
             this.checkBox_roundPfp.UseVisualStyleBackColor = true;
             this.checkBox_roundPfp.CheckedChanged += new System.EventHandler(this.checkBox_roundPfp_CheckedChanged);
             // 
+            // button_updater
+            // 
+            this.button_updater.Location = new System.Drawing.Point(542, 68);
+            this.button_updater.Name = "button_updater";
+            this.button_updater.Size = new System.Drawing.Size(90, 40);
+            this.button_updater.TabIndex = 9;
+            this.button_updater.Text = "Update Menu";
+            this.button_updater.UseVisualStyleBackColor = true;
+            this.button_updater.Click += new System.EventHandler(this.button_updater_Click);
+            // 
             // Form_Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 316);
+            this.Controls.Add(this.button_updater);
             this.Controls.Add(this.checkBox_roundPfp);
             this.Controls.Add(this.button_about);
             this.Controls.Add(this.button_cancel);
@@ -156,13 +168,16 @@ namespace MusicBeePlugin.Form.Configure
             this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
             this.Name = "Form_Configure";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.Text = "User Account";
+            this.Text = "User Cosmetics Configuration";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.Form_Configure_Load);
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.Button button_updater;
+        
         private System.Windows.Forms.CheckBox checkBox_roundPfp;
         
         private System.Windows.Forms.Button button_about;
