@@ -8,6 +8,7 @@ This plugin's current state is functional and stable enough to be released as an
 
 - Add a picture and username to be displayed in an individual panel
 - Option to round picture's corners
+- Includes an auto updater that fetches releases straight from the repo
 
 ### TODO
 
@@ -15,7 +16,6 @@ This plugin's current state is functional and stable enough to be released as an
 - Add custom color option for back and foreground
 - Add greeting options
 - Add GIF support(?)
-- Add auto updater/notifier  
 - And more...
 
 # Installation
