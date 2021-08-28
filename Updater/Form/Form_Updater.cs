@@ -48,7 +48,43 @@ namespace MusicBeePlugin.Updater.Form
             label_GHCurrentVer.Text = $"Most current version:\n{_GHRelease.TagName}";
             _releaseFailed = false;
         }
-        
+
+        private void VersionCompare(ref GitHubRelease release)
+        {
+            if (Regex.IsMatch($"v{Plugin.About.VersionToString()}", release.TagName))
+            {
+                label_verCompare.Text = $"Plugin '{Plugin.About.Name}' is up-to-date with the GitHub repo!";
+                _versionSame = true;
+                return;
+            }
+
+            if (_releaseFailed)
+            {
+                label_verCompare.Text = "Unable to fetch current version.";
+                return;
+            }
+
+            label_verCompare.Text = "This plugin is not current with the GitHub repo. Please press the 'update' button to automatically update.";
+            _versionSame = false;
+        }
+
+        public async Task<string> ConfigureFormLabelHandler()
+        {
+            GitHubRelease configRelease = await new GitHubRelease().MakeGitHubReleaseAsync();
+            
+            if (Regex.IsMatch($"v{Plugin.About.VersionToString()}", configRelease.TagName))
+            {
+                return "Up-to-date!";
+            }
+
+            if (Regex.IsMatch(configRelease.TagName, "error"))
+            {
+                return "Failed to fetch data!";
+            }
+
+            return $"New version ({configRelease.TagName}) available!";
+        }
+
         private void link_GHRepo_MouseHover(object sender, EventArgs e)
         { 
             toolTip_GHLink.SetToolTip(link_GHRepo.Controls.Owner, _GHRepo);
@@ -89,25 +125,6 @@ namespace MusicBeePlugin.Updater.Form
         private void button_ok_Click(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void VersionCompare(ref GitHubRelease release)
-        {
-            if (Regex.IsMatch($"v{Plugin.About.VersionToString()}", release.TagName))
-            {
-                label_verCompare.Text = $"Plugin '{Plugin.About.Name}' is up-to-date with the GitHub repo!";
-                _versionSame = true;
-                return;
-            }
-
-            if (_releaseFailed)
-            {
-                label_verCompare.Text = "Unable to fetch current version.";
-                return;
-            }
-
-            label_verCompare.Text = "This plugin is not current with the GitHub repo. Please press the 'update' button to automatically update.";
-            _versionSame = false;
         }
 
         private void button_refresh_Click(object sender, EventArgs e)

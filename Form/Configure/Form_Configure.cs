@@ -27,7 +27,7 @@ namespace MusicBeePlugin.Form.Configure
             _settings = settings;
         }
 
-        private void Form_Configure_Load(object sender, EventArgs e)
+        private async void Form_Configure_Load(object sender, EventArgs e)
         {
             if (_settings.GetFromKey("username") == string.Empty || _settings.GetFromKey("pfpPath") == string.Empty)
             {
@@ -41,6 +41,8 @@ namespace MusicBeePlugin.Form.Configure
             textbox_username.Text = _username;
             
             picbox_pfp.Image = ImageHandler();
+
+            label_versionInfo.Text = await new Form_Updater().ConfigureFormLabelHandler();
         }
 
         private void button_submit_Click(object sender, EventArgs e)

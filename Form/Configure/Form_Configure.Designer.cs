@@ -43,6 +43,7 @@ namespace MusicBeePlugin.Form.Configure
             this.button_about = new System.Windows.Forms.Button();
             this.checkBox_roundPfp = new System.Windows.Forms.CheckBox();
             this.button_updater = new System.Windows.Forms.Button();
+            this.label_versionInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).BeginInit();
             this.SuspendLayout();
             // 
@@ -149,11 +150,21 @@ namespace MusicBeePlugin.Form.Configure
             this.button_updater.UseVisualStyleBackColor = true;
             this.button_updater.Click += new System.EventHandler(this.button_updater_Click);
             // 
+            // label_versionInfo
+            // 
+            this.label_versionInfo.Location = new System.Drawing.Point(542, 111);
+            this.label_versionInfo.Name = "label_versionInfo";
+            this.label_versionInfo.Size = new System.Drawing.Size(90, 42);
+            this.label_versionInfo.TabIndex = 10;
+            this.label_versionInfo.Text = "Awaiting data...";
+            this.label_versionInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
             // Form_Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 316);
+            this.Controls.Add(this.label_versionInfo);
             this.Controls.Add(this.button_updater);
             this.Controls.Add(this.checkBox_roundPfp);
             this.Controls.Add(this.button_about);
@@ -175,6 +186,10 @@ namespace MusicBeePlugin.Form.Configure
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Label label_versionInfo;
+
+        private System.Windows.Forms.Label label1;
 
         private System.Windows.Forms.Button button_updater;
         
