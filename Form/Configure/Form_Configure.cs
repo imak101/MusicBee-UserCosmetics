@@ -29,10 +29,13 @@ namespace MusicBeePlugin.Form.Configure
 
         private async void Form_Configure_Load(object sender, EventArgs e)
         {
+            label_versionInfo.Text = await new Form_Updater().ConfigureFormLabelHandler();
+            
             if (_settings.GetFromKey("username") == string.Empty || _settings.GetFromKey("pfpPath") == string.Empty)
             {
                 return;
             }
+
             _filePath = _settings.GetFromKey("pfpPath");
             _username = _settings.GetFromKey("username");
             _roundPfpChecked = Convert.ToBoolean(_settings.GetFromKey("roundPfpCheck"));
@@ -41,8 +44,6 @@ namespace MusicBeePlugin.Form.Configure
             textbox_username.Text = _username;
             
             picbox_pfp.Image = ImageHandler();
-
-            label_versionInfo.Text = await new Form_Updater().ConfigureFormLabelHandler();
         }
 
         private void button_submit_Click(object sender, EventArgs e)

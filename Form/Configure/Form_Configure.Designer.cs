@@ -188,9 +188,7 @@ namespace MusicBeePlugin.Form.Configure
         }
 
         private System.Windows.Forms.Label label_versionInfo;
-
-        private System.Windows.Forms.Label label1;
-
+        
         private System.Windows.Forms.Button button_updater;
         
         private System.Windows.Forms.CheckBox checkBox_roundPfp;
