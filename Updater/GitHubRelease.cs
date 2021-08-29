@@ -37,14 +37,26 @@ namespace MusicBeePlugin.Updater
             {
                 string pluginPath = Path.Combine(Application.StartupPath, $"Plugins\\{Plugin.About.ProjectName}.dll");
                 string pluginFolderPath = Path.Combine(Application.StartupPath, "Plugins\\");
-                string mbSettingsIniPath = Path.Combine(Plugin.About.PersistentStoragePath, "MusicBee3Settings.ini");
-                
-                File.Move(pluginPath, pluginFolderPath + "old.dll");
+                string pluginPathBackup = Path.Combine(Plugin.About.PersistentStoragePath, $"Plugins\\{Plugin.About.ProjectName}.dll");
+                string pluginFolderPathBackup = Path.Combine(Plugin.About.PersistentStoragePath, "Plugins\\");
+
+                bool backupPathUsed = false;
+
+                try
+                {
+                    File.Move(pluginPath, pluginFolderPath + "old.dll");
+                }
+                catch (Exception)
+                {
+                    File.Move(pluginPathBackup, pluginFolderPathBackup + "old.dll");
+                    backupPathUsed = true;
+                }
 
                 string downloadUrl = await ParseResponseStringForValueFromKey("browser_download_url", true);
                 string urlDllName = Regex.Match(downloadUrl, "mb_[\\S]*").Value;
-                
-                client.DownloadFile(new Uri(await ParseResponseStringForValueFromKey("browser_download_url", true)), pluginFolderPath + urlDllName);
+
+                if (backupPathUsed) client.DownloadFile(new Uri(await ParseResponseStringForValueFromKey("browser_download_url", true)), pluginFolderPathBackup + urlDllName);
+                else client.DownloadFile(new Uri(await ParseResponseStringForValueFromKey("browser_download_url", true)), pluginFolderPath + urlDllName);
 
                 if (urlDllName != Plugin.About.ProjectName + ".dll")
                 {
@@ -54,8 +66,6 @@ namespace MusicBeePlugin.Updater
 
                     await Task.Delay(50000);
                 }
-                
-                //TODO: gray out update button when update not needed, change setting file's name
                 
                 Application.Restart();
             }

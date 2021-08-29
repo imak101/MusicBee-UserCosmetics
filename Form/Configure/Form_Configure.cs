@@ -75,7 +75,7 @@ namespace MusicBeePlugin.Form.Configure
             }
             catch (NullReferenceException)
             {
-                new Form_Popup("Your account has been set! To see it in the application, add the panel 'user account' to your view with MusicBee's 'Arrange Panels' menu option.", "Set Panel");
+                new Form_Popup("Your account has been set! To see it in the application, add the panel 'user cosmetics' to your view with MusicBee's 'Arrange Panels' menu option.", "Set Panel");
             }
         }
         

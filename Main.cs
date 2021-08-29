@@ -38,7 +38,7 @@ namespace MusicBeePlugin
             _about.Type = PluginType.PanelView;
             _about.VersionMajor = 0;  // your plugin version
             _about.VersionMinor = 2;
-            _about.Revision = 3;
+            _about.Revision = 4;
             _about.MinInterfaceVersion = MinInterfaceVersion;
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
@@ -49,9 +49,10 @@ namespace MusicBeePlugin
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
 
-            if (File.Exists(Application.StartupPath + "/Plugins/old.dll"))
+            if (File.Exists(Application.StartupPath + "/Plugins/old.dll") || File.Exists(_about.PersistentStoragePath + "/Plugins/old.dll"))
             {
-                File.Delete(Application.StartupPath + "/Plugins/old.dll");
+                try {File.Delete(Application.StartupPath + "/Plugins/old.dll");}
+                finally {File.Delete(_about.PersistentStoragePath + "/Plugins/old.dll");}
             }
 
             _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
