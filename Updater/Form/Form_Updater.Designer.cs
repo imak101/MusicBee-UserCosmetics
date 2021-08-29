@@ -75,12 +75,12 @@ namespace MusicBeePlugin.Updater.Form
             // 
             // link_GHCurrent
             // 
-            this.link_GHCurrent.Location = new System.Drawing.Point(12, 28);
+            this.link_GHCurrent.Location = new System.Drawing.Point(12, 33);
             this.link_GHCurrent.Name = "link_GHCurrent";
-            this.link_GHCurrent.Size = new System.Drawing.Size(111, 19);
+            this.link_GHCurrent.Size = new System.Drawing.Size(140, 19);
             this.link_GHCurrent.TabIndex = 3;
             this.link_GHCurrent.TabStop = true;
-            this.link_GHCurrent.Text = "Most Current Release";
+            this.link_GHCurrent.Text = "Patch Notes";
             this.link_GHCurrent.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.link_GHCurrent_LinkClicked);
             this.link_GHCurrent.MouseHover += new System.EventHandler(this.link_GHCurrent_MouseHover);
             // 

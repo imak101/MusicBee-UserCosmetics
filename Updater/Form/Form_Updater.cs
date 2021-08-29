@@ -33,6 +33,8 @@ namespace MusicBeePlugin.Updater.Form
             
             VersionCompare(ref _GHRelease);
 
+            if (!_releaseFailed) link_GHCurrent.Text = $"Patch Notes for {_GHRelease.TagName}";
+
             if (!_versionSame && !_releaseFailed) button_update.Enabled = true;
         }
 
