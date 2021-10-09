@@ -97,10 +97,7 @@ namespace MusicBeePlugin.Form.Configure
 
                     try
                     {
-                        using (var picBitmap = new Bitmap(picStream))
-                        {
-                            picBitmap.Tag = _filePath;
-                        }
+                        using (var picBitmap = new Bitmap(picStream)) {}
                     }
                     catch (ArgumentException)
                     {
@@ -122,8 +119,10 @@ namespace MusicBeePlugin.Form.Configure
         {
             try
             {
-                using (Bitmap pfp = new Bitmap(_filePath))
+                using (Image pfp = new Bitmap(_filePath))
                 {
+                    pfp.Tag = _filePath;
+                    
                     if (_roundPfpChecked)
                     {
                         return PaintManager.P_ApplyRoundedCorners(pfp, _picBoxSize.Width, _picBoxSize.Height);

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -169,8 +171,19 @@ namespace MusicBeePlugin
             }
         }
 
-        public static Bitmap P_ResizeImage(Bitmap image, int width, int height)
+        public static Image P_ResizeImage(Image image, int width, int height)
         {
+            if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifRun")
+            {
+                //return new Bitmap((string) image.Tag);
+                GifHandler handler = new GifHandler(image);
+
+                var after = handler.Resize2();
+                Debug.Assert(ImageAnimator.CanAnimate(handler.Resize2()));
+
+                return after;
+            }
+            
             Rectangle destRect = new Rectangle(0, 0, width, height);
             Bitmap destImage = new Bitmap(width, height);
             
@@ -195,10 +208,10 @@ namespace MusicBeePlugin
             return destImage;
         }
 
-        public static Bitmap P_ApplyRoundedCorners(Bitmap image, int width, int height)
+        public static Image P_ApplyRoundedCorners(Image image, int width, int height)
         {
             Rectangle plaster = new Rectangle(0, 0, width, height);
-            Bitmap pfpBmp = P_ResizeImage(image, width, height);
+            Image pfpBmp = P_ResizeImage(image, width, height);
             Bitmap targetBmp = new Bitmap(width, height);
 
             
@@ -235,6 +248,11 @@ namespace MusicBeePlugin
                     }
                 }
             }
+        }
+
+        private static bool GifCheck(Bitmap image)
+        {
+            return ImageAnimator.CanAnimate(image);
         }
 
         private void CalculateCenter_Point()
