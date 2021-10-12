@@ -33,6 +33,8 @@ namespace MusicBeePlugin
 
         private Control _controlMain;
 
+        private PictureBox _picBox;
+
         private bool _drawRounded;
         
         public PaintManager(ref Plugin.MusicBeeApiInterface mbAPI, ref PluginSettings settings)
@@ -82,12 +84,18 @@ namespace MusicBeePlugin
             CalculateCenter_Point();
             
             TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
-            _eventArgs.Graphics.DrawImage(ImageHandler(),_pfpPoint);
+            //_eventArgs.Graphics.DrawImage(ImageHandler(),_pfpPoint);
+            _picBox.Image = ImageHandler();
         }
 
         private Image ImageHandler()
         {
             string currentPath = _pfpPath;
+
+            if (ImageAnimator.CanAnimate(new Bitmap(_pfpPath)))
+            {
+                return new Bitmap(_pfpPath);
+            }
 
             if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || !_drawRounded)
             {
@@ -175,7 +183,8 @@ namespace MusicBeePlugin
         {
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifRun")
             {
-                //return new Bitmap((string) image.Tag);
+                
+                return new Bitmap((string) image.Tag);
                 GifHandler handler = new GifHandler(image);
 
                 var after = handler.Resize2();
@@ -258,6 +267,7 @@ namespace MusicBeePlugin
         private void CalculateCenter_Point()
         {
             _controlMain = Plugin.FormControlMain;
+            _picBox = (PictureBox) _controlMain.Controls["picBox"];
             
             if (_pfp == null)
             {
@@ -269,6 +279,10 @@ namespace MusicBeePlugin
 
             _usernamePoint.X = Convert.ToInt32((_controlMain.Size.Width - _eventArgs.Graphics.MeasureString(_username, SystemFonts.CaptionFont).Width) / 2); // calculate text center relative to text and control size
             _usernamePoint.Y = (_controlMain.Height / 2) + _pfp.Height / 2 + 3;
+
+            _picBox.Location = _pfpPoint;
+            _picBox.Size = _pfpSize;
+            _picBox.SizeMode = PictureBoxSizeMode.Zoom;
         }
     }
 }

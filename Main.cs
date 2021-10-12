@@ -52,7 +52,7 @@ namespace MusicBeePlugin
             if (File.Exists(Application.StartupPath + "/Plugins/old.dll") || File.Exists(_about.PersistentStoragePath + "/Plugins/old.dll"))
             {
                 try {File.Delete(Application.StartupPath + "/Plugins/old.dll");}
-                finally {File.Delete(_about.PersistentStoragePath + "/Plugins/old.dll");}
+                catch (Exception) {File.Delete(_about.PersistentStoragePath + "/Plugins/old.dll");}
             }
 
             _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
@@ -159,6 +159,10 @@ namespace MusicBeePlugin
             {
                 dpiScaling = g.DpiY / 96f;
             }
+
+            PictureBox picBox = new PictureBox {Parent = panel, Name = "picBox"};
+            panel.Controls.Add(picBox);
+
             panel.Paint += panel_Paint;
             FormControlMain = panel;
             return Convert.ToInt32(100 * dpiScaling);
