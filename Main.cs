@@ -159,12 +159,10 @@ namespace MusicBeePlugin
             {
                 dpiScaling = g.DpiY / 96f;
             }
-
-            PictureBox picBox = new PictureBox {Parent = panel, Name = "picBox"};
-            panel.Controls.Add(picBox);
-
+            
             panel.Paint += panel_Paint;
             FormControlMain = panel;
+            _paintManager.MakePicBox();
             return Convert.ToInt32(100 * dpiScaling);
         }
 

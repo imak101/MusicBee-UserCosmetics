@@ -12,9 +12,9 @@ namespace MusicBeePlugin
         private FrameDimension _dimension;
         private int _frameCount;
         
-        public GifHandler(Image gif)
+        public GifHandler(string gifPath)
         {
-            _gif = gif;
+            _gif = new Bitmap(gifPath);
             _dimension = new FrameDimension(_gif.FrameDimensionsList[0]);
             _frameCount = _gif.GetFrameCount(_dimension);
         }

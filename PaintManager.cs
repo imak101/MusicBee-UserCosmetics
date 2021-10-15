@@ -185,7 +185,7 @@ namespace MusicBeePlugin
             {
                 
                 return new Bitmap((string) image.Tag);
-                GifHandler handler = new GifHandler(image);
+                GifHandler handler = new GifHandler((string)image.Tag);
 
                 var after = handler.Resize2();
                 Debug.Assert(ImageAnimator.CanAnimate(handler.Resize2()));
@@ -259,14 +259,21 @@ namespace MusicBeePlugin
             }
         }
 
-        private static bool GifCheck(Bitmap image)
+        public void MakePicBox()
         {
-            return ImageAnimator.CanAnimate(image);
+            _controlMain = Plugin.FormControlMain;
+
+            void PicBoxMake()
+            {
+                _picBox = new PictureBox { Parent = _controlMain, Name = "picBox" };
+                _controlMain.Controls.Add(_picBox);
+            }
+
+            _controlMain.Invoke((Action)PicBoxMake);
         }
 
         private void CalculateCenter_Point()
         {
-            _controlMain = Plugin.FormControlMain;
             _picBox = (PictureBox) _controlMain.Controls["picBox"];
             
             if (_pfp == null)
