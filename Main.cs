@@ -159,7 +159,8 @@ namespace MusicBeePlugin
             {
                 dpiScaling = g.DpiY / 96f;
             }
-            
+
+            panel.MouseClick += onPanelMainClick;
             panel.Paint += panel_Paint;
             FormControlMain = panel;
             _paintManager.MakePicBox();
@@ -186,6 +187,20 @@ namespace MusicBeePlugin
             List<ToolStripItem> list = new List<ToolStripItem> {new ToolStripMenuItem("Configure")};
             list[0].Click += (sender, args) => Configure(IntPtr.Zero);
             return list;
+        }
+
+        private void onPanelMainClick(object sender, MouseEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case MouseButtons.Right:
+                    ToolStripDropDownMenu downMenu = new ToolStripDropDownMenu();
+                    GetMenuItems().ForEach(item => downMenu.Items.Add(item));
+                    downMenu.Show(Cursor.Position);
+                    
+                    
+                    break;
+            }
         }
     }
 }
