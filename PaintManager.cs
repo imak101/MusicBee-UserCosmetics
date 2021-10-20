@@ -184,13 +184,18 @@ namespace MusicBeePlugin
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifRun")
             {
                 
-                return new Bitmap((string) image.Tag);
+                //return new Bitmap((string) image.Tag);
                 GifHandler handler = new GifHandler((string)image.Tag);
 
-                var after = handler.Resize2();
-                Debug.Assert(ImageAnimator.CanAnimate(handler.Resize2()));
+                //Image[] dd = handler.MakeGifArray();
 
-                return after;
+                //new Form_Popup(dd.Length.ToString(), "dd");
+
+                Bitmap ss = handler.resize3();
+
+                return ss;
+
+                //return after;
             }
             
             Rectangle destRect = new Rectangle(0, 0, width, height);

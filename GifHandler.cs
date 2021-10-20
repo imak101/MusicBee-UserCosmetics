@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.Serialization;
+using MusicBeePlugin.Form.Popup;
 
 namespace MusicBeePlugin
 {
@@ -19,58 +21,117 @@ namespace MusicBeePlugin
             _frameCount = _gif.GetFrameCount(_dimension);
         }
         
-        public Image ResizeGif()
+
+        public Image[] MakeGifArray()
         {
-            // using (Stream resizeStream = new MemoryStream())
-            // {
-            //     _gif.Save(resizeStream, ImageFormat.Gif);
-            //     
-            //     
-            //
-            //     new Bitmap(96, 96);
-            //     EncoderParameters encoderParam = new EncoderParameters();
-            //     encoderParam.Param[0] = new EncoderParameter(Encoder.SaveFlag, 1);
-                Image newGif = (Image)_gif.Clone();
-                
-                for (int i = 0; i < _frameCount; i++)
-                {
-                    _gif.Tag = "gifRun"; // to avoid infinite recursion
-                    
-                    _gif.SelectActiveFrame(_dimension, i);
-                    newGif.SelectActiveFrame(_dimension, i);
+            Image[] gifFrames = new Image[_frameCount];
 
-                    newGif = PaintManager.P_ResizeImage(_gif, 96, 96);
-                
-                    //_gif.SaveAdd(encoderParam);
-                }
-
-                newGif.SelectActiveFrame(_dimension, 0);
-                
-                return newGif;
-                //}
+            for (int i = 0; i < gifFrames.Length; i++)
+            {
+                _gif.SelectActiveFrame(_dimension, i);
+                gifFrames[i] = new Bitmap(_gif) ;
+            }
+            
+            return gifFrames;
         }
 
-        public Image Resize2()
+        public Bitmap resize3()
         {
-            //for (int i = 0; i < _frameCount; i++)
-            //{
-                _gif.Tag = "gifRun"; // to avoid infinite recursion
+            // Gdi+ constants absent from System.Drawing.
+            const int PropertyTagFrameDelay = 0x5100;
+            const int PropertyTagLoopCount = 0x5101;
+            const short PropertyTagTypeLong = 4;
+            const short PropertyTagTypeShort = 3;
 
-                _gif.SelectActiveFrame(_dimension, 3);
-            
+            const int UintBytes = 4;
 
-                // Image copy = (Image)_gif.Clone();
-                // copy.Tag = "gifRun";
-                //
-                // var x = PaintManager.P_ApplyRoundedCorners( copy, 60, 60);
-                //
-                // _gif = x;
-                //
-                // Debug.Assert(ImageAnimator.CanAnimate(_gif));
+            Image[] gifFrames = MakeGifArray();
+
+//...
+            var gifEncoder = GetEncoder(ImageFormat.Gif);
+// Params of the first frame.
+            var encoderParams1 = new EncoderParameters(1);
+            encoderParams1.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.MultiFrame);
+// Params of other frames.
+            var encoderParamsN = new EncoderParameters(1);
+            encoderParamsN.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.FrameDimensionTime);
+// Params for the finalizing call.
+            var encoderParamsFlush = new EncoderParameters(1);
+            encoderParamsFlush.Param[0] = new EncoderParameter(Encoder.SaveFlag, (long)EncoderValue.Flush);
+
+// PropertyItem for the frame delay (apparently, no other way to create a fresh instance).
+            var frameDelay = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
+            frameDelay.Id = PropertyTagFrameDelay;
+            frameDelay.Type = PropertyTagTypeLong;
+// Length of the value in bytes.
+            frameDelay.Len = gifFrames.Length * UintBytes;
+// The value is an array of 4-byte entries: one per frame.
+// Every entry is the frame delay in 1/100-s of a second, in little endian.
+            var delay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0);
+            new Form.Popup.Form_Popup(delay.ToString(), "ww");
+            frameDelay.Value = new byte[delay * 4];
+// E.g., here, we're setting the delay of every frame to 1 second.
+
+            var frameDelayBytes = BitConverter.GetBytes((uint)delay);
+            for (int j = 0; j < gifFrames.Length; ++j)
+                try
+                {
+                    Array.Copy(frameDelayBytes, 0, frameDelay.Value, j * UintBytes, UintBytes);
+                }
+                catch (Exception e)
+                {
+                    break;
+                }
+
+// PropertyItem for the number of animation loops.
+            var loopPropertyItem = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
+            loopPropertyItem.Id = PropertyTagLoopCount;
+            loopPropertyItem.Type = PropertyTagTypeShort;
+            loopPropertyItem.Len = 0;
+// 0 means to animate forever.
+            loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
+
+            using (var stream = new FileStream("1animation.gif", FileMode.Create))
+            {
+                bool first = true;
+                Bitmap firstBitmap = null;
+                // Bitmaps is a collection of Bitmap instances that'll become gif frames.
+                foreach (var bitmap in gifFrames)
+                {
+                    if (first)
+                    {
+                        firstBitmap = (Bitmap) bitmap;
+                        firstBitmap.SetPropertyItem(frameDelay);
+                        firstBitmap.SetPropertyItem(loopPropertyItem);
+                        firstBitmap.Save(stream, gifEncoder, encoderParams1);
+                        first = false;
+                    }
+                    else
+                    {
+                        firstBitmap.SaveAdd(bitmap, encoderParamsN);
+                    }
+                }
+
+                firstBitmap?.SaveAdd(encoderParamsFlush);
                 
-                return new Bitmap(_gif);
-                //}
+                new Form_Popup((BitConverter.ToInt32(firstBitmap.GetPropertyItem(20736).Value, 0)).ToString(), "ss)");
 
+                return firstBitmap;
+            }
+
+            
+            ImageCodecInfo GetEncoder(ImageFormat format)
+            {
+                ImageCodecInfo[] codecs = ImageCodecInfo.GetImageDecoders();
+                foreach (ImageCodecInfo codec in codecs)
+                {
+                    if (codec.FormatID == format.Guid)
+                    {
+                        return codec;
+                    }
+                }
+                return null;
+            }
         }
     }
 }
