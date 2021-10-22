@@ -191,7 +191,7 @@ namespace MusicBeePlugin
 
                 //new Form_Popup(dd.Length.ToString(), "dd");
 
-                Bitmap ss = handler.resize3();
+                Bitmap ss = new Bitmap(handler.ReassembleGif());
 
                 return ss;
 

@@ -35,7 +35,20 @@ namespace MusicBeePlugin
             return gifFrames;
         }
 
-        public Bitmap resize3()
+        public string ResizeGif(int width, int height)
+        {
+            Image[] gifFrames = MakeGifArray();
+
+            foreach (Image bmp in gifFrames)
+            {
+                
+            }
+
+        }
+        
+
+/// <returns>Path to new gif</returns>
+        private string ReassembleGif(Image[] gifFrames)
         {
             // Gdi+ constants absent from System.Drawing.
             const int PropertyTagFrameDelay = 0x5100;
@@ -44,9 +57,7 @@ namespace MusicBeePlugin
             const short PropertyTagTypeShort = 3;
 
             const int UintBytes = 4;
-
-            Image[] gifFrames = MakeGifArray();
-
+            
 //...
             var gifEncoder = GetEncoder(ImageFormat.Gif);
 // Params of the first frame.
@@ -68,8 +79,7 @@ namespace MusicBeePlugin
 // The value is an array of 4-byte entries: one per frame.
 // Every entry is the frame delay in 1/100-s of a second, in little endian.
             var delay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0);
-            new Form.Popup.Form_Popup(delay.ToString(), "ww");
-            frameDelay.Value = new byte[delay * 4];
+            frameDelay.Value = new byte[_frameCount * 4];
 // E.g., here, we're setting the delay of every frame to 1 second.
 
             var frameDelayBytes = BitConverter.GetBytes((uint)delay);
@@ -78,7 +88,7 @@ namespace MusicBeePlugin
                 {
                     Array.Copy(frameDelayBytes, 0, frameDelay.Value, j * UintBytes, UintBytes);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     break;
                 }
@@ -91,7 +101,8 @@ namespace MusicBeePlugin
 // 0 means to animate forever.
             loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
 
-            using (var stream = new FileStream("1animation.gif", FileMode.Create))
+            string filePath = Path.Combine(Plugin.About.PersistentStoragePath, "processed.gif");
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 bool first = true;
                 Bitmap firstBitmap = null;
@@ -113,10 +124,9 @@ namespace MusicBeePlugin
                 }
 
                 firstBitmap?.SaveAdd(encoderParamsFlush);
-                
-                new Form_Popup((BitConverter.ToInt32(firstBitmap.GetPropertyItem(20736).Value, 0)).ToString(), "ss)");
+                firstBitmap?.Dispose();
 
-                return firstBitmap;
+                return filePath;
             }
 
             
