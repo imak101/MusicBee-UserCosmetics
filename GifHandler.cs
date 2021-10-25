@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
+using System.Threading;
 using MusicBeePlugin.Form.Popup;
 
 namespace MusicBeePlugin
@@ -13,6 +16,8 @@ namespace MusicBeePlugin
         private Image _gif;
         private FrameDimension _dimension;
         private int _frameCount;
+
+        public List<string> OldFileNamesForDeletion = new List<string>();
         
         public GifHandler(string gifPath)
         {
@@ -22,7 +27,7 @@ namespace MusicBeePlugin
         }
         
 
-        public Image[] MakeGifArray()
+        private Image[] MakeGifArray()
         {
             Image[] gifFrames = new Image[_frameCount];
 
@@ -39,11 +44,13 @@ namespace MusicBeePlugin
         {
             Image[] gifFrames = MakeGifArray();
 
-            foreach (Image bmp in gifFrames)
+            for (int i = 0; i < gifFrames.Length; i++)
             {
-                
+                gifFrames[i].Tag = "gifFrame";
+                gifFrames[i] = PaintManager.P_ResizeImage(gifFrames[i], width, height);
             }
 
+            return ReassembleGif(gifFrames);
         }
         
 
@@ -101,33 +108,47 @@ namespace MusicBeePlugin
 // 0 means to animate forever.
             loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
 
-            string filePath = Path.Combine(Plugin.About.PersistentStoragePath, "processed.gif");
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            string filePath = Path.Combine(Plugin.About.PersistentStorageFolder, "processed.gif");
+
+            Stitching:
+            try
             {
-                bool first = true;
-                Bitmap firstBitmap = null;
-                // Bitmaps is a collection of Bitmap instances that'll become gif frames.
-                foreach (var bitmap in gifFrames)
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                 {
-                    if (first)
+                    bool first = true;
+                    Bitmap firstBitmap = null;
+                    // Bitmaps is a collection of Bitmap instances that'll become gif frames.
+                    foreach (var bitmap in gifFrames)
                     {
-                        firstBitmap = (Bitmap) bitmap;
-                        firstBitmap.SetPropertyItem(frameDelay);
-                        firstBitmap.SetPropertyItem(loopPropertyItem);
-                        firstBitmap.Save(stream, gifEncoder, encoderParams1);
-                        first = false;
+                        if (first)
+                        {
+                            firstBitmap = (Bitmap) bitmap;
+                            firstBitmap.SetPropertyItem(frameDelay);
+                            firstBitmap.SetPropertyItem(loopPropertyItem);
+                            firstBitmap.Save(stream, gifEncoder, encoderParams1);
+                            first = false;
+                        }
+                        else
+                        {
+                            firstBitmap.SaveAdd(bitmap, encoderParamsN);
+                        }
                     }
-                    else
-                    {
-                        firstBitmap.SaveAdd(bitmap, encoderParamsN);
-                    }
+
+                    firstBitmap?.SaveAdd(encoderParamsFlush);
+                    firstBitmap?.Dispose();
                 }
-
-                firstBitmap?.SaveAdd(encoderParamsFlush);
-                firstBitmap?.Dispose();
-
-                return filePath;
             }
+            catch(IOException)
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                File.Delete(filePath);
+                goto Stitching;
+            }
+            
+
+            return filePath;
+            
 
             
             ImageCodecInfo GetEncoder(ImageFormat format)
@@ -143,5 +164,22 @@ namespace MusicBeePlugin
                 return null;
             }
         }
-    }
+
+        private int FilePathRNG()
+        {
+            // if (!Regex.IsMatch(Directory.GetFiles(Plugin.About.PersistentStorageFolder), "processed")) return 1;
+            
+            foreach (string fileName in Directory.GetFiles(Plugin.About.PersistentStorageFolder))
+            {
+                if (Regex.IsMatch(fileName, @"\dprocessed")) OldFileNamesForDeletion; // Returns 1 if the file doesn't exist
+                else
+                {
+                    
+                }
+            }
+            
+            
+        }
+        
+    }   
 }

@@ -296,6 +296,7 @@ namespace MusicBeePlugin
         {
             public short PluginInfoVersion;
             public string PersistentStoragePath;
+            public string PersistentStorageFolder;
             public string ProjectName;
             public PluginType Type;
             public string Name;

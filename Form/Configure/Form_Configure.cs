@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -92,28 +93,32 @@ namespace MusicBeePlugin.Form.Configure
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
                     _filePath = dialog.FileName;
-                    
-                    var picStream = dialog.OpenFile();
 
-                    try
+                    using (var picStream = dialog.OpenFile())
                     {
-                        using (var picBitmap = new Bitmap(picStream)) {}
-                    }
-                    catch (ArgumentException)
-                    {
-                        SystemSounds.Asterisk.Play();
+                        try
+                        {
+                            using (var picBitmap = new Bitmap(picStream)) {}
+                        }
+                        catch (ArgumentException)
+                        {
+                            SystemSounds.Asterisk.Play();
 
-                        _filePath = string.Empty;
-                        picbox_pfp.Image = null;
+                            _filePath = string.Empty;
+                            picbox_pfp.Image = null;
                         
-                        new Form_Popup("This file is invalid. Your file's dimensions may be too large or not in valid .jpg or .png format.", "Error");
-                        return;
+                            new Form_Popup("This file is invalid. Your file's dimensions may be too large or not in valid .jpg or .png format.", "Error");
+                            return;
+                        }
+                        picStream.Close();
                     }
+                    
 
                     picbox_pfp.Image = ImageHandler();
                 }
             }
         }
+        
 
         private Image ImageHandler()
         {

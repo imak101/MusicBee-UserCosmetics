@@ -181,19 +181,19 @@ namespace MusicBeePlugin
 
         public static Image P_ResizeImage(Image image, int width, int height)
         {
-            if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifRun")
+            if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
             {
-                
                 //return new Bitmap((string) image.Tag);
-                GifHandler handler = new GifHandler((string)image.Tag);
+                GifHandler handler = new GifHandler((string) image.Tag);
+                return new Bitmap(handler.ResizeGif(width, height));
 
                 //Image[] dd = handler.MakeGifArray();
 
                 //new Form_Popup(dd.Length.ToString(), "dd");
-
-                Bitmap ss = new Bitmap(handler.ReassembleGif());
-
-                return ss;
+                //
+                // Image ss = handler.ResizeGif(width, height);
+                //
+                // return ss;
 
                 //return after;
             }

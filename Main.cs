@@ -44,8 +44,10 @@ namespace MusicBeePlugin
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
             _about.ConfigurationPanelHeight = 0;   // height in pixels that musicbee should reserve in a panel for config settings. When set, a handle to an empty panel will be passed to the Configure function
             _about.PersistentStoragePath = _mbApiInterface.Setting_GetPersistentStoragePath.Invoke();
+            _about.PersistentStorageFolder = Path.Combine(_about.PersistentStoragePath, "mb_UserCosmetics\\");
             About = _about;
             
+            Directory.CreateDirectory(_about.PersistentStorageFolder);
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
 
@@ -197,7 +199,6 @@ namespace MusicBeePlugin
                     ToolStripDropDownMenu downMenu = new ToolStripDropDownMenu();
                     GetMenuItems().ForEach(item => downMenu.Items.Add(item));
                     downMenu.Show(Cursor.Position);
-                    
                     
                     break;
             }
