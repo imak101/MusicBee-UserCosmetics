@@ -58,6 +58,7 @@ namespace MusicBeePlugin
             }
 
             _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
+            GifHandler.DeleteFilesInList();
 
 
             return _about;
@@ -102,6 +103,7 @@ namespace MusicBeePlugin
         // MusicBee is closing the plugin (plugin is being disabled by user or MusicBee is shutting down)
         public void Close(PluginCloseReason reason)
         {
+            GifHandler.DeleteFilesInList();
         }
 
         // uninstall this plugin - clean up any persisted files

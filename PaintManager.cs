@@ -185,17 +185,13 @@ namespace MusicBeePlugin
             {
                 //return new Bitmap((string) image.Tag);
                 GifHandler handler = new GifHandler((string) image.Tag);
+
+                // using (var temp = new Bitmap(handler.ResizeGif(width, height)))
+                // {
+                //     return new Bitmap(tem);
+                // }
                 return new Bitmap(handler.ResizeGif(width, height));
-
-                //Image[] dd = handler.MakeGifArray();
-
-                //new Form_Popup(dd.Length.ToString(), "dd");
-                //
-                // Image ss = handler.ResizeGif(width, height);
-                //
-                // return ss;
-
-                //return after;
+                
             }
             
             Rectangle destRect = new Rectangle(0, 0, width, height);

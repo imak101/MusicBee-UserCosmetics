@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
-using System.Threading;
 using MusicBeePlugin.Form.Popup;
 
 namespace MusicBeePlugin
@@ -17,7 +15,7 @@ namespace MusicBeePlugin
         private FrameDimension _dimension;
         private int _frameCount;
 
-        public List<string> OldFileNamesForDeletion = new List<string>();
+        public static List<string> OldFileNamesForDeletion = new List<string>();
         
         public GifHandler(string gifPath)
         {
@@ -108,12 +106,11 @@ namespace MusicBeePlugin
 // 0 means to animate forever.
             loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
 
-            string filePath = Path.Combine(Plugin.About.PersistentStorageFolder, "processed.gif");
+            string filePath = Path.Combine(Plugin.About.PersistentStorageFolder,  $"{FilePathRNG().ToString()}processed.gif");
 
-            Stitching:
             try
             {
-                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite))
                 {
                     bool first = true;
                     Bitmap firstBitmap = null;
@@ -142,8 +139,6 @@ namespace MusicBeePlugin
             {
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                File.Delete(filePath);
-                goto Stitching;
             }
             
 
@@ -167,19 +162,68 @@ namespace MusicBeePlugin
 
         private int FilePathRNG()
         {
-            // if (!Regex.IsMatch(Directory.GetFiles(Plugin.About.PersistentStorageFolder), "processed")) return 1;
+            List<int> usedNum = new List<int>();
             
-            foreach (string fileName in Directory.GetFiles(Plugin.About.PersistentStorageFolder))
+            DeleteFilesInList();
+
+            foreach (int usedNumber in PopulateFileList())
             {
-                if (Regex.IsMatch(fileName, @"\dprocessed")) OldFileNamesForDeletion; // Returns 1 if the file doesn't exist
-                else
+                usedNum.Add(usedNumber);
+            }
+            
+
+            if (usedNum.Count == 0) return 1;
+            
+            Random random = new Random();
+            int randInt = random.Next(0,10);
+            for (int i = 0; i < usedNum.Count; i++)
+            {
+                if (randInt == usedNum[i])
+                {
+                    randInt = random.Next(0, 10);
+                    i = 0;
+                }
+            }
+
+            return randInt;
+        }
+
+        public static void DeleteFilesInList()
+        {
+            if (OldFileNamesForDeletion.Count == 0)
+            {
+                foreach (var i in PopulateFileList()) ;
+            }
+            
+            foreach (string fileName in OldFileNamesForDeletion.ToArray())
+            {
+                try
+                {
+                    File.Delete(fileName);
+                    OldFileNamesForDeletion.Remove(fileName);
+                }
+                catch (IOException e)
                 {
                     
                 }
+                catch (ArgumentException)
+                {
+                    return;
+                }
             }
-            
-            
         }
-        
+
+        private static IEnumerable<int> PopulateFileList()
+        {
+            foreach (string fileName in Directory.GetFiles(Plugin.About.PersistentStorageFolder))
+            {
+                Match regexMatch = Regex.Match(fileName, @"\dprocessed");
+                if (regexMatch.Success)
+                {
+                    OldFileNamesForDeletion.Add(fileName);
+                    yield return int.Parse(regexMatch.Value[0].ToString());
+                }
+            }
+        }
     }   
 }
