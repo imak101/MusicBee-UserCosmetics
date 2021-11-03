@@ -90,6 +90,8 @@ namespace MusicBeePlugin
 
         private Image ImageHandler()
         {
+            // TODO: Implement proper gif support
+            
             string currentPath = _pfpPath;
 
             if (ImageAnimator.CanAnimate(new Bitmap(_pfpPath)))

@@ -192,7 +192,7 @@ namespace MusicBeePlugin
         {
             if (OldFileNamesForDeletion.Count == 0)
             {
-                foreach (var i in PopulateFileList()) ;
+                PopulateFileListVoid();
             }
             
             foreach (string fileName in OldFileNamesForDeletion.ToArray())
@@ -212,7 +212,8 @@ namespace MusicBeePlugin
                 }
             }
         }
-
+        
+        /// <returns>yield returns file numbers that are being used</returns>
         private static IEnumerable<int> PopulateFileList()
         {
             foreach (string fileName in Directory.GetFiles(Plugin.About.PersistentStorageFolder))
@@ -224,6 +225,11 @@ namespace MusicBeePlugin
                     yield return int.Parse(regexMatch.Value[0].ToString());
                 }
             }
+        }
+
+        private static void PopulateFileListVoid()
+        {
+            foreach (var VARIABLE in PopulateFileList()) ;
         }
     }   
 }
