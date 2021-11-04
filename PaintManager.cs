@@ -186,7 +186,7 @@ namespace MusicBeePlugin
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
             {
                 //return new Bitmap((string) image.Tag);
-                GifHandler handler = new GifHandler((string) image.Tag);
+                GifHandler handler = new GifHandler((string) image.Tag, GifHandler.GifScope.Form);
 
                 // using (var temp = new Bitmap(handler.ResizeGif(width, height)))
                 // {
@@ -224,8 +224,7 @@ namespace MusicBeePlugin
         {
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
             {
-                //return new Bitmap((string) image.Tag);
-                GifHandler handler = new GifHandler((string) image.Tag, true);
+                GifHandler handler = new GifHandler((string) image.Tag, GifHandler.GifScope.Form,true);
 
                 return new Bitmap(handler.ResizeAndRoundGifCorners(width, height));
             }

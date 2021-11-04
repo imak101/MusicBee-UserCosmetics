@@ -16,17 +16,33 @@ namespace MusicBeePlugin
         private int _frameCount;
 
         private bool _roundCorners;
+        
+        private GifScope _scope;
 
+        public static string GifPathMainPanel { get; private set; }
+        public static string GifPathForm { get; private set; }
+        
         public static List<string> OldFileNamesForDeletion = new List<string>();
         
-        public GifHandler(string gifPath, bool roundCorners = false)
+        public GifHandler(string gifPath, GifScope scope, bool roundCorners = false)
         {
             _gif = new Bitmap(gifPath);
             _dimension = new FrameDimension(_gif.FrameDimensionsList[0]);
             _frameCount = _gif.GetFrameCount(_dimension);
             _roundCorners = roundCorners;
+            _scope = scope;
         }
-        
+
+        protected GifHandler()
+        {
+        }
+
+        /// <summary>Used in constructor to specify the usage scope of the gif</summary>
+        public enum GifScope
+        {
+            Form = 0,
+            MainPanel = 1
+        }
 
         private Image[] MakeGifArray()
         {
@@ -122,7 +138,7 @@ namespace MusicBeePlugin
 // 0 means to animate forever.
             loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
 
-            string filePath = Path.Combine(Plugin.About.PersistentStorageFolder,  $"{FilePathRNG().ToString()}processed.gif");
+            string filePath = Path.Combine(SwitchPath(),  $"{FilePathRNG().ToString()}processed.gif");
 
             try
             {
@@ -174,6 +190,23 @@ namespace MusicBeePlugin
                 }
                 return null;
             }
+        }
+
+        public static void InitiateGifDirectories()
+        {
+            GifPathForm = Directory.CreateDirectory(Path.Combine(Plugin.About.PersistentStorageFolder, "Form\\")).FullName;
+            GifPathMainPanel = Directory.CreateDirectory(Path.Combine(Plugin.About.PersistentStorageFolder, "MainPanel\\")).FullName;
+        }
+
+        private string SwitchPath()
+        {
+            switch (_scope)
+            {
+                case GifScope.Form: return GifPathForm;
+                case GifScope.MainPanel: return GifPathMainPanel;
+            }
+
+            return string.Empty;
         }
 
         private int FilePathRNG()
@@ -246,5 +279,13 @@ namespace MusicBeePlugin
         {
             foreach (var VARIABLE in PopulateFileList()) ;
         }
-    }   
+    }
+
+    public class GifForm : GifHandler
+    {
+        public GifForm()
+        {
+            // TODO: Determine if implementing two separate classes is better than context switching in one
+        }
+    }
 }

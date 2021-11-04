@@ -48,6 +48,7 @@ namespace MusicBeePlugin
             About = _about;
             
             Directory.CreateDirectory(_about.PersistentStorageFolder);
+            GifHandler.InitiateGifDirectories();
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
 
