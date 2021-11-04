@@ -222,6 +222,14 @@ namespace MusicBeePlugin
 
         public static Image P_ApplyRoundedCorners(Image image, int width, int height)
         {
+            if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
+            {
+                //return new Bitmap((string) image.Tag);
+                GifHandler handler = new GifHandler((string) image.Tag, true);
+
+                return new Bitmap(handler.ResizeAndRoundGifCorners(width, height));
+            }
+            
             Rectangle plaster = new Rectangle(0, 0, width, height);
             Image pfpBmp = P_ResizeImage(image, width, height);
             Bitmap targetBmp = new Bitmap(width, height);

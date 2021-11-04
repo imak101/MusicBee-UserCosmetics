@@ -15,13 +15,16 @@ namespace MusicBeePlugin
         private FrameDimension _dimension;
         private int _frameCount;
 
+        private bool _roundCorners;
+
         public static List<string> OldFileNamesForDeletion = new List<string>();
         
-        public GifHandler(string gifPath)
+        public GifHandler(string gifPath, bool roundCorners = false)
         {
             _gif = new Bitmap(gifPath);
             _dimension = new FrameDimension(_gif.FrameDimensionsList[0]);
             _frameCount = _gif.GetFrameCount(_dimension);
+            _roundCorners = roundCorners;
         }
         
 
@@ -32,7 +35,7 @@ namespace MusicBeePlugin
             for (int i = 0; i < gifFrames.Length; i++)
             {
                 _gif.SelectActiveFrame(_dimension, i);
-                gifFrames[i] = new Bitmap(_gif) ;
+                gifFrames[i] = new Bitmap(_gif);
             }
             
             return gifFrames;
@@ -46,6 +49,19 @@ namespace MusicBeePlugin
             {
                 gifFrames[i].Tag = "gifFrame";
                 gifFrames[i] = PaintManager.P_ResizeImage(gifFrames[i], width, height);
+            }
+
+            return ReassembleGif(gifFrames);
+        }
+
+        public string ResizeAndRoundGifCorners(int width, int height)
+        {
+            Image[] gifFrames = MakeGifArray();
+
+            for (int i = 0; i < gifFrames.Length; i++)
+            {
+                gifFrames[i].Tag = "gifFrame";
+                gifFrames[i] = PaintManager.P_ApplyRoundedCorners(gifFrames[i], width, height);
             }
 
             return ReassembleGif(gifFrames);
@@ -171,7 +187,6 @@ namespace MusicBeePlugin
                 usedNum.Add(usedNumber);
             }
             
-
             if (usedNum.Count == 0) return 1;
             
             Random random = new Random();
