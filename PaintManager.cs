@@ -94,18 +94,27 @@ namespace MusicBeePlugin
             
             string currentPath = _pfpPath;
 
-            if (ImageAnimator.CanAnimate(new Bitmap(_pfpPath)))
-            {
-                return new Bitmap(_pfpPath);
-            }
-
+            bool canAnimate = ImageAnimator.CanAnimate(new Bitmap(_pfpPath));
+            
             if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || !_drawRounded)
             {
+                if (canAnimate)
+                {
+                    _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeGif( _pfpSize.Width, _pfpSize.Height));
+                    return _pfp;
+                }
+
                 _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width, _pfpSize.Height);
             }
 
             if (_drawRounded)
             {
+                if (canAnimate)
+                {
+                    if ((string)_pfp.Tag != currentPath) _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeAndRoundGifCorners( _pfpSize.Width, _pfpSize.Height));
+                    return _pfp;
+                }
+                
                 if ((string)_pfp.Tag != currentPath) _pfp = ApplyRoundCorners();
             }
             
@@ -220,7 +229,7 @@ namespace MusicBeePlugin
             return destImage;
         }
 
-        public static Image P_ApplyRoundedCorners(Image image, int width, int height)
+        public static Image P_ApplyRoundedCorners(Image image, int width, int height, bool useMenuColor = true)
         {
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
             {
@@ -251,8 +260,8 @@ namespace MusicBeePlugin
                         graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
                         graphics.SmoothingMode = SmoothingMode.HighQuality;
                         graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                        
-                        graphics.FillRectangle(new SolidBrush(SystemColors.Menu), plaster);
+
+                        graphics.FillRectangle(!useMenuColor ? new SolidBrush(Color.FromArgb(Plugin._mbApiInterface.Setting_GetSkinElementColour.Invoke(Plugin.SkinElement.SkinSubPanel, Plugin.ElementState.ElementStateDefault, Plugin.ElementComponent.ComponentBackground))) : new SolidBrush(SystemColors.Menu), plaster);
 
                         texture.TranslateTransform(xAbsolutePixel.X, xAbsolutePixel.Y);
                         

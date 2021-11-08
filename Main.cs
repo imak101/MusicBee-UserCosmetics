@@ -19,7 +19,7 @@ namespace MusicBeePlugin
 {
     public partial class Plugin
     {
-        private MusicBeeApiInterface _mbApiInterface;
+        public static MusicBeeApiInterface _mbApiInterface;
         private PluginInfo _about = new PluginInfo();
         private PluginSettings _settings;
         private PaintManager _paintManager;
@@ -59,7 +59,7 @@ namespace MusicBeePlugin
             }
 
             _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
-            GifHandler.DeleteFilesInList();
+            GifHandler.DeleteFilesInList(null);
 
 
             return _about;
@@ -104,7 +104,7 @@ namespace MusicBeePlugin
         // MusicBee is closing the plugin (plugin is being disabled by user or MusicBee is shutting down)
         public void Close(PluginCloseReason reason)
         {
-            GifHandler.DeleteFilesInList();
+            GifHandler.DeleteFilesInList(null);
         }
 
         // uninstall this plugin - clean up any persisted files

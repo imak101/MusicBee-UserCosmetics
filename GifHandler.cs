@@ -32,16 +32,14 @@ namespace MusicBeePlugin
             _roundCorners = roundCorners;
             _scope = scope;
         }
+        
 
-        protected GifHandler()
-        {
-        }
-
-        /// <summary>Used in constructor to specify the usage scope of the gif</summary>
+        /// <summary>Used in to specify the usage scope of the gif</summary>
         public enum GifScope
         {
             Form = 0,
             MainPanel = 1
+            
         }
 
         private Image[] MakeGifArray()
@@ -77,7 +75,7 @@ namespace MusicBeePlugin
             for (int i = 0; i < gifFrames.Length; i++)
             {
                 gifFrames[i].Tag = "gifFrame";
-                gifFrames[i] = PaintManager.P_ApplyRoundedCorners(gifFrames[i], width, height);
+                gifFrames[i] = PaintManager.P_ApplyRoundedCorners(gifFrames[i], width, height, false);
             }
 
             return ReassembleGif(gifFrames);
@@ -138,7 +136,7 @@ namespace MusicBeePlugin
 // 0 means to animate forever.
             loopPropertyItem.Value = BitConverter.GetBytes((ushort)0);
 
-            string filePath = Path.Combine(SwitchPath(),  $"{FilePathRNG().ToString()}processed.gif");
+            string filePath = Path.Combine(SwitchPath(_scope),  $"{FilePathRNG().ToString()}processed.gif");
 
             try
             {
@@ -198,24 +196,23 @@ namespace MusicBeePlugin
             GifPathMainPanel = Directory.CreateDirectory(Path.Combine(Plugin.About.PersistentStorageFolder, "MainPanel\\")).FullName;
         }
 
-        private string SwitchPath()
+        private static string SwitchPath(GifScope scope)
         {
-            switch (_scope)
+            switch (scope)
             {
                 case GifScope.Form: return GifPathForm;
                 case GifScope.MainPanel: return GifPathMainPanel;
+                default: throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
             }
-
-            return string.Empty;
         }
-
+        
         private int FilePathRNG()
         {
             List<int> usedNum = new List<int>();
             
-            DeleteFilesInList();
+            DeleteFilesInList(_scope);
 
-            foreach (int usedNumber in PopulateFileList())
+            foreach (int usedNumber in PopulateFileList(_scope))
             {
                 usedNum.Add(usedNumber);
             }
@@ -235,12 +232,23 @@ namespace MusicBeePlugin
 
             return randInt;
         }
-
-        public static void DeleteFilesInList()
+        
+        /// <param name="scope">If null, delete contents in ALL gif folders, else, delete given</param>
+        public static void DeleteFilesInList(GifScope? scope)
         {
             if (OldFileNamesForDeletion.Count == 0)
             {
-                PopulateFileListVoid();
+                foreach (GifScope gifScope in (GifScope[]) Enum.GetValues(typeof(GifScope)))
+                {
+                    if (scope != null)
+                    {
+                        PopulateFileListVoid(scope.Value);
+                        break;
+                    } 
+                    
+                    PopulateFileListVoid(gifScope);
+                }
+
             }
             
             foreach (string fileName in OldFileNamesForDeletion.ToArray())
@@ -262,9 +270,9 @@ namespace MusicBeePlugin
         }
         
         /// <returns>yield returns file numbers that are being used</returns>
-        private static IEnumerable<int> PopulateFileList()
+        private static IEnumerable<int> PopulateFileList(GifScope scope)
         {
-            foreach (string fileName in Directory.GetFiles(Plugin.About.PersistentStorageFolder))
+            foreach (string fileName in Directory.GetFiles(SwitchPath(scope)))
             {
                 Match regexMatch = Regex.Match(fileName, @"\dprocessed");
                 if (regexMatch.Success)
@@ -275,17 +283,9 @@ namespace MusicBeePlugin
             }
         }
 
-        private static void PopulateFileListVoid()
+        private static void PopulateFileListVoid(GifScope scope)
         {
-            foreach (var VARIABLE in PopulateFileList()) ;
-        }
-    }
-
-    public class GifForm : GifHandler
-    {
-        public GifForm()
-        {
-            // TODO: Determine if implementing two separate classes is better than context switching in one
+            foreach (var VARIABLE in PopulateFileList(scope));
         }
     }
 }
