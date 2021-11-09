@@ -75,7 +75,7 @@ namespace MusicBeePlugin
             for (int i = 0; i < gifFrames.Length; i++)
             {
                 gifFrames[i].Tag = "gifFrame";
-                gifFrames[i] = PaintManager.P_ApplyRoundedCorners(gifFrames[i], width, height, false);
+                gifFrames[i] = PaintManager.P_ApplyRoundedCorners(gifFrames[i], width, height, _scope == GifScope.Form);
             }
 
             return ReassembleGif(gifFrames);
@@ -258,7 +258,7 @@ namespace MusicBeePlugin
                     File.Delete(fileName);
                     OldFileNamesForDeletion.Remove(fileName);
                 }
-                catch (IOException e)
+                catch (IOException)
                 {
                     
                 }

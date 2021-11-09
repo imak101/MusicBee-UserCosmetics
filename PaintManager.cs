@@ -100,13 +100,15 @@ namespace MusicBeePlugin
             {
                 if (canAnimate)
                 {
+                    if (_drawRounded) goto DrawRounded;
                     _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeGif( _pfpSize.Width, _pfpSize.Height));
                     return _pfp;
                 }
 
                 _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width, _pfpSize.Height);
             }
-
+            
+            DrawRounded:
             if (_drawRounded)
             {
                 if (canAnimate)
