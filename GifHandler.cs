@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using MusicBeePlugin.Form.Popup;
@@ -47,9 +48,9 @@ namespace MusicBeePlugin
             
         }
 
-        private Image[] MakeGifArray()
+        private Bitmap[] MakeGifArray()
         {
-            Image[] gifFrames = new Image[_frameCount];
+            Bitmap[] gifFrames = new Bitmap[_frameCount];
 
             for (int i = 0; i < gifFrames.Length; i++)
             {
@@ -204,8 +205,7 @@ namespace MusicBeePlugin
                 GifBitmapDecoder decoder = new GifBitmapDecoder(gifStream, BitmapCreateOptions.None, BitmapCacheOption.Default);
                 
                 GifBitmapEncoder encoder = new GifBitmapEncoder();
-                encoder.Frames = decoder.Frames;
-                
+                encoder.Frames = Resize2();
                 
                 using (MemoryStream ms = new MemoryStream())
                 {
@@ -229,6 +229,23 @@ namespace MusicBeePlugin
             }
         }
 
+        private List<BitmapFrame> Resize2()
+        {
+            Bitmap[] gifFrames = MakeGifArray();
+            List<BitmapFrame> bitmapFrames = new List<BitmapFrame>();
+
+            for (int i = 0; i < gifFrames.Length; i++)
+            {
+                gifFrames[i].Tag = "gifFrame";
+                gifFrames[i] = (Bitmap)PaintManager.P_ApplyRoundedCorners(gifFrames[i], 200, 200, _scope == GifScope.Form);
+                
+                bitmapFrames.Add(BitmapFrame.Create(Imaging.CreateBitmapSourceFromHBitmap(gifFrames[i].GetHbitmap(), IntPtr.Zero, new Int32Rect(0,0, 60,60), BitmapSizeOptions.FromEmptyOptions())));
+
+            }
+            
+            return bitmapFrames;
+        }
+
         private void WriteGraphicControlBlock(ref List<byte> byteList)
         {
             byte[] frameDelay = GetFrameDelay();
@@ -239,7 +256,7 @@ namespace MusicBeePlugin
 
                 if (byteList[i + 1] == 249 && byteList[i + 7] == 0)
                 {
-                    byteList[i + 3] = 5;
+                    byteList[i + 3] = TryTransparency();
 
                     byteList[i + 4] = frameDelay[0];
                     byteList[i + 5] = frameDelay[1];
@@ -255,6 +272,14 @@ namespace MusicBeePlugin
             string byte2 = delay[2].ToString() + delay[3].ToString();
             
             return new[] { byte.Parse(byte1), byte.Parse(byte2) };
+        }
+
+        private byte TryTransparency()
+        {
+            try { _gif.GetPropertyItem(20740); }
+            catch (ArgumentException) { return 4; }
+            
+            return 5;
         }
 
         public static void InitiateGifDirectories()
