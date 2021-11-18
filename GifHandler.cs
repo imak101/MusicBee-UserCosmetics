@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using MusicBeePlugin.Form.Popup;
 
 namespace MusicBeePlugin
@@ -14,7 +17,8 @@ namespace MusicBeePlugin
         private Image _gif;
         private FrameDimension _dimension;
         private int _frameCount;
-
+        private string _gifPath;
+        
         private bool _roundCorners;
         
         private GifScope _scope;
@@ -31,6 +35,7 @@ namespace MusicBeePlugin
             _frameCount = _gif.GetFrameCount(_dimension);
             _roundCorners = roundCorners;
             _scope = scope;
+            _gifPath = gifPath;
         }
         
 
@@ -188,6 +193,68 @@ namespace MusicBeePlugin
                 }
                 return null;
             }
+        }
+
+        public string Reassemble2()
+        {
+            using (FileStream gifStream = new FileStream(_gifPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                string filePath = Path.Combine(SwitchPath(_scope),  $"{FilePathRNG().ToString()}processed.gif");
+                
+                GifBitmapDecoder decoder = new GifBitmapDecoder(gifStream, BitmapCreateOptions.None, BitmapCacheOption.Default);
+                
+                GifBitmapEncoder encoder = new GifBitmapEncoder();
+                encoder.Frames = decoder.Frames;
+                
+                
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    encoder.Save(ms);
+                    byte[] fileBytes = ms.ToArray();
+                    byte[] applicationExtension = { 33, 255, 11, 78, 69, 84, 83, 67, 65, 80, 69, 50, 46, 48, 3, 1, 0, 0, 0 };
+                    
+                    List<byte> newBytes = new List<byte>();
+                    
+                    newBytes.AddRange(fileBytes.Take(13));
+                    newBytes.AddRange(applicationExtension);
+                    newBytes.AddRange(fileBytes.Skip(13));
+                    
+                    WriteGraphicControlBlock(ref newBytes);
+                    
+                    File.WriteAllBytes( filePath, newBytes.ToArray());
+                    return filePath;
+                }
+                
+                
+            }
+        }
+
+        private void WriteGraphicControlBlock(ref List<byte> byteList)
+        {
+            byte[] frameDelay = GetFrameDelay();
+            
+            for (int i = 0; i < byteList.Count; i++)
+            {
+                if (byteList[i] != 33) continue;
+
+                if (byteList[i + 1] == 249 && byteList[i + 7] == 0)
+                {
+                    byteList[i + 3] = 5;
+
+                    byteList[i + 4] = frameDelay[0];
+                    byteList[i + 5] = frameDelay[1];
+                }
+            }
+        }
+
+        private byte[] GetFrameDelay()
+        { 
+            byte[] delay = _gif.GetPropertyItem(20736).Value.Take(4).ToArray();
+            
+            string byte1 = delay[1].ToString() + delay[0].ToString();
+            string byte2 = delay[2].ToString() + delay[3].ToString();
+            
+            return new[] { byte.Parse(byte1), byte.Parse(byte2) };
         }
 
         public static void InitiateGifDirectories()
