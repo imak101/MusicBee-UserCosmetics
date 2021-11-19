@@ -84,15 +84,14 @@ namespace MusicBeePlugin
             CalculateCenter_Point();
             
             TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
-            //_eventArgs.Graphics.DrawImage(ImageHandler(),_pfpPoint);
-            _picBox.Image = ImageHandler();
+            
+            _picBox.Image = ImageHandler(); // Make async somehow 
         }
 
         private Image ImageHandler()
         {
-            // TODO: Implement proper gif support
-            
             string currentPath = _pfpPath;
+            DetermineEllipseDraw();
 
             bool canAnimate = ImageAnimator.CanAnimate(new Bitmap(_pfpPath));
             
@@ -101,7 +100,7 @@ namespace MusicBeePlugin
                 if (canAnimate)
                 {
                     if (_drawRounded) goto DrawRounded;
-                    _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeGif( _pfpSize.Width, _pfpSize.Height));
+                    _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeGif(_pfpSize.Width, _pfpSize.Height));
                     return _pfp;
                 }
 
@@ -113,7 +112,7 @@ namespace MusicBeePlugin
             {
                 if (canAnimate)
                 {
-                    if ((string)_pfp.Tag != currentPath) _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeAndRoundGifCorners( _pfpSize.Width, _pfpSize.Height));
+                    if ((string)_pfp.Tag != currentPath) _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeAndRoundGifCorners(_pfpSize.Width, _pfpSize.Height));
                     return _pfp;
                 }
                 
@@ -121,6 +120,23 @@ namespace MusicBeePlugin
             }
             
             return _pfp;
+        }
+
+        private void DetermineEllipseDraw()
+        {
+            if (_drawRounded)
+            {
+                using (GraphicsPath gp = new GraphicsPath())
+                {
+                    gp.AddEllipse(0, 0, _picBox.Width, _picBox.Height);
+                    Region rg = new Region(gp);
+                    _picBox.Region = rg;
+                    
+                    return;
+                }
+            }
+
+            _picBox.Region = null;
         }
         
         private Bitmap ResizeImage(Image image, int width, int height)
@@ -196,15 +212,9 @@ namespace MusicBeePlugin
         {
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
             {
-                //return new Bitmap((string) image.Tag);
                 GifHandler handler = new GifHandler((string) image.Tag, GifHandler.GifScope.Form);
-
-                // using (var temp = new Bitmap(handler.ResizeGif(width, height)))
-                // {
-                //     return new Bitmap(tem);
-                // }
-                return new Bitmap(handler.ResizeGif(width, height));
                 
+                return new Bitmap(handler.ResizeGif(width,height));
             }
             
             Rectangle destRect = new Rectangle(0, 0, width, height);
@@ -307,7 +317,7 @@ namespace MusicBeePlugin
 
             _usernamePoint.X = Convert.ToInt32((_controlMain.Size.Width - _eventArgs.Graphics.MeasureString(_username, SystemFonts.CaptionFont).Width) / 2); // calculate text center relative to text and control size
             _usernamePoint.Y = (_controlMain.Height / 2) + _pfp.Height / 2 + 3;
-
+            
             _picBox.Location = _pfpPoint;
             _picBox.Size = _pfpSize;
             _picBox.SizeMode = PictureBoxSizeMode.Zoom;

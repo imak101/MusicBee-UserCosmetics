@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace MusicBeePlugin.Form.Configure
 {
@@ -117,7 +118,7 @@ namespace MusicBeePlugin.Form.Configure
             // 
             this.openFileDialog_pfp.DefaultExt = "jpg";
             this.openFileDialog_pfp.Filter = "*.jpg *.png *.gif| *.jpg; *.png; *.gif";
-            this.openFileDialog_pfp.InitialDirectory = "C:\\";
+            this.openFileDialog_pfp.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
             this.openFileDialog_pfp.Title = "Select Picture";
             // 
             // button_about
