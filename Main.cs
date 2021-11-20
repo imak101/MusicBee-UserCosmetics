@@ -202,7 +202,6 @@ namespace MusicBeePlugin
                     ToolStripDropDownMenu downMenu = new ToolStripDropDownMenu();
                     GetMenuItems().ForEach(item => downMenu.Items.Add(item));
                     downMenu.Show(Cursor.Position);
-                    
                     break;
             }
         }

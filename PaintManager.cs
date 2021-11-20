@@ -91,7 +91,6 @@ namespace MusicBeePlugin
         private Image ImageHandler()
         {
             string currentPath = _pfpPath;
-            DetermineEllipseDraw();
 
             bool canAnimate = ImageAnimator.CanAnimate(new Bitmap(_pfpPath));
             
@@ -122,23 +121,6 @@ namespace MusicBeePlugin
             return _pfp;
         }
 
-        private void DetermineEllipseDraw()
-        {
-            if (_drawRounded)
-            {
-                using (GraphicsPath gp = new GraphicsPath())
-                {
-                    gp.AddEllipse(0, 0, _picBox.Width, _picBox.Height);
-                    Region rg = new Region(gp);
-                    _picBox.Region = rg;
-                    
-                    return;
-                }
-            }
-
-            _picBox.Region = null;
-        }
-        
         private Bitmap ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
@@ -301,6 +283,25 @@ namespace MusicBeePlugin
             }
 
             _controlMain.Invoke((Action)PicBoxMake);
+            _picBox.Paint += picBox_Paint;
+        }
+
+        private void picBox_Paint(object sender, PaintEventArgs e)
+        {
+            if (_drawRounded)
+            {
+                using (GraphicsPath gp = new GraphicsPath())
+                {
+                    e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+                    gp.AddEllipse(0, 0, _picBox.Size.Width, _picBox.Size.Height);
+                    _picBox.Region = new Region(gp);
+                    e.Graphics.DrawEllipse(new Pen(new SolidBrush(_bgColor)), 0, 0, _picBox.Size.Width, _picBox.Size.Height);
+                    
+                    return;
+                }
+            }
+
+            _picBox.Region = null;
         }
 
         private void CalculateCenter_Point()

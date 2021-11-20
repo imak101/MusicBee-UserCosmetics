@@ -219,10 +219,7 @@ namespace MusicBeePlugin
                     File.Delete(fileName);
                     OldFileNamesForDeletion.Remove(fileName);
                 }
-                catch (IOException)
-                {
-                    
-                }
+                catch (IOException) { }
                 catch (ArgumentException)
                 {
                     return;

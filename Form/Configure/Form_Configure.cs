@@ -110,6 +110,9 @@ namespace MusicBeePlugin.Form.Configure
                             new Form_Popup("This file is invalid. Your file's dimensions may be too large or not in valid .jpg or .png format.", "Error");
                             return;
                         }
+                        
+                        if (picStream.Length >= 5000000) new Form_Popup("Images (especially gifs) over 5MB may cause performance issues/crashes.", "Warning");
+                        
                         picStream.Close();
                     }
                     
