@@ -6,6 +6,7 @@ using System.IO;
 using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using MusicBeePlugin.Drawing;
 using MusicBeePlugin.Form.Popup;
 using MusicBeePlugin.Updater.Form;
 

@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
-using MusicBeePlugin.Form.Popup;
 
-
-namespace MusicBeePlugin
+namespace MusicBeePlugin.Drawing
 {
     public class PaintManager
     {

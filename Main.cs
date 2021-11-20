@@ -1,19 +1,13 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Media;
-using System.Threading;
-using System.Threading.Tasks;
+using MusicBeePlugin.Drawing;
 using MusicBeePlugin.Form.Configure;
 using MusicBeePlugin.Form.Popup;
-using MusicBeePlugin.Updater.Form;
-using MusicBeePlugin.Updater;
 
 namespace MusicBeePlugin
 {

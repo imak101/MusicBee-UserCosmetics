@@ -8,9 +8,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using MusicBeePlugin.Form.Popup;
 
-namespace MusicBeePlugin
+namespace MusicBeePlugin.Drawing
 {
     public class GifHandler
     {
