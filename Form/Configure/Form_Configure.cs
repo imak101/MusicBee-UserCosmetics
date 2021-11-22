@@ -1,10 +1,7 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Media;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MusicBeePlugin.Drawing;
 using MusicBeePlugin.Form.Popup;
@@ -20,8 +17,7 @@ namespace MusicBeePlugin.Form.Configure
         private static readonly Size _picBoxSize = new Size(200, 200); 
         private PluginSettings _settings;
         private Plugin.MusicBeeApiInterface _musicBeeApiInterface;
-
-
+        
         public Form_Configure(ref PluginSettings settings, ref Plugin.MusicBeeApiInterface mbInterface)
         {
             InitializeComponent();
@@ -126,6 +122,7 @@ namespace MusicBeePlugin.Form.Configure
 
         private Image ImageHandler()
         {
+            picbox_pfp.Image?.Dispose();
             try
             {
                 using (Image pfp = new Bitmap(_filePath))
@@ -203,7 +200,11 @@ namespace MusicBeePlugin.Form.Configure
             updater.StartPosition = FormStartPosition.CenterParent;
             
             updater.Show();
+        }
 
+        private void Form_Configure_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            picbox_pfp.Image?.Dispose();
         }
     }
 }

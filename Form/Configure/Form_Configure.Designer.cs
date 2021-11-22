@@ -182,6 +182,7 @@ namespace MusicBeePlugin.Form.Configure
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "User Cosmetics Configuration";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Configure_FormClosing);
             this.Load += new System.EventHandler(this.Form_Configure_Load);
             ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).EndInit();
             this.ResumeLayout(false);
