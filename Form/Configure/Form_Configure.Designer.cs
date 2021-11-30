@@ -50,6 +50,7 @@ namespace MusicBeePlugin.Form.Configure
             this.numericUpDown_gifSpeed = new System.Windows.Forms.NumericUpDown();
             this.label_cutsomGifSpeed = new System.Windows.Forms.Label();
             this.button_gifSpeedOriginal = new System.Windows.Forms.Button();
+            this.button_restore = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picbox_pfp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_gifSpeed)).BeginInit();
             this.SuspendLayout();
@@ -220,11 +221,21 @@ namespace MusicBeePlugin.Form.Configure
             this.button_gifSpeedOriginal.UseVisualStyleBackColor = true;
             this.button_gifSpeedOriginal.Click += new System.EventHandler(this.button_gifSpeedOriginal_Click);
             // 
+            // button_restore
+            // 
+            this.button_restore.Location = new System.Drawing.Point(312, 85);
+            this.button_restore.Name = "button_restore";
+            this.button_restore.Size = new System.Drawing.Size(101, 23);
+            this.button_restore.TabIndex = 16;
+            this.button_restore.Text = "Restore Info";
+            this.button_restore.UseVisualStyleBackColor = true;
+            // 
             // Form_Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 316);
+            this.Controls.Add(this.button_restore);
             this.Controls.Add(this.button_gifSpeedOriginal);
             this.Controls.Add(this.label_cutsomGifSpeed);
             this.Controls.Add(this.numericUpDown_gifSpeed);
@@ -255,6 +266,8 @@ namespace MusicBeePlugin.Form.Configure
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.Button button_restore;
+        
         private System.Windows.Forms.Label label_cutsomGifSpeed;
         
         private System.Windows.Forms.NumericUpDown numericUpDown_gifSpeed;
