@@ -42,6 +42,7 @@ namespace MusicBeePlugin
             About = _about;
             
             Directory.CreateDirectory(_about.PersistentStorageFolder);
+            _about.CoversStorageFolder = Directory.CreateDirectory(Path.Combine(About.PersistentStorageFolder, "Covers\\")).FullName;
             GifHandler.InitiateGifDirectories();
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
@@ -52,7 +53,7 @@ namespace MusicBeePlugin
                 catch (Exception) {File.Delete(_about.PersistentStoragePath + "/Plugins/old.dll");}
             }
 
-            _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Account: Configure", (sender, args) => Configure(IntPtr.Zero));
+            _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Cosmetics: Configure", (sender, args) => Configure(IntPtr.Zero));
             GifHandler.DeleteFilesInList(null);
 
 
@@ -61,15 +62,14 @@ namespace MusicBeePlugin
 
         public bool Configure(IntPtr panelHandle)
         {
-            Form_Configure form = new Form_Configure(ref _settings, ref _mbApiInterface);
-            
             if (Form_Configure.CheckOpened("User Cosmetics Configuration"))
             {
                 SystemSounds.Asterisk.Play();
-                form.Close();
                 new Form_Popup("Configuration menu already open!", "Error");
                 return true;
             }
+
+            Form_Configure form = new Form_Configure(ref _settings, ref _mbApiInterface);
 
             form.StartPosition = FormStartPosition.CenterScreen;
             
@@ -163,6 +163,7 @@ namespace MusicBeePlugin
             panel.Paint += panel_Paint;
             FormControlMain = panel;
             _paintManager.MakePicBox();
+            _paintManager.MakeTimer();
             return Convert.ToInt32(100 * dpiScaling);
         }
 

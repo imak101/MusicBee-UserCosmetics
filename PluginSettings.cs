@@ -36,7 +36,7 @@ namespace MusicBeePlugin
                 return;
             }
 
-            string[] keys = {"pfpPath", "username", "roundPfpCheck"};
+            string[] keys = {"pfpPath", "username", "roundPfpCheck", "customGifSpeed", "useTimerDrawing"};
             
             File.Create(_filePath).Close();
             var writer = File.AppendText(_filePath); writer.Write("<body></body>"); writer.Close();

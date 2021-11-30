@@ -45,7 +45,13 @@ namespace MusicBeePlugin.Form.Configure
             this.checkBox_roundPfp = new System.Windows.Forms.CheckBox();
             this.button_updater = new System.Windows.Forms.Button();
             this.label_versionInfo = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).BeginInit();
+            this.checkBox_useTimerDrawing = new System.Windows.Forms.CheckBox();
+            this.button_GetCurrentAlbum = new System.Windows.Forms.Button();
+            this.numericUpDown_gifSpeed = new System.Windows.Forms.NumericUpDown();
+            this.label_cutsomGifSpeed = new System.Windows.Forms.Label();
+            this.button_gifSpeedOriginal = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.picbox_pfp)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_gifSpeed)).BeginInit();
             this.SuspendLayout();
             // 
             // label_username
@@ -93,6 +99,7 @@ namespace MusicBeePlugin.Form.Configure
             this.picbox_pfp.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picbox_pfp.TabIndex = 4;
             this.picbox_pfp.TabStop = false;
+            this.picbox_pfp.Paint += new System.Windows.Forms.PaintEventHandler(this.picBox_Paint);
             // 
             // button_submit
             // 
@@ -160,11 +167,69 @@ namespace MusicBeePlugin.Form.Configure
             this.label_versionInfo.Text = "Awaiting data...";
             this.label_versionInfo.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // checkBox_useTimerDrawing
+            // 
+            this.checkBox_useTimerDrawing.Enabled = false;
+            this.checkBox_useTimerDrawing.Location = new System.Drawing.Point(218, 114);
+            this.checkBox_useTimerDrawing.Name = "checkBox_useTimerDrawing";
+            this.checkBox_useTimerDrawing.Size = new System.Drawing.Size(189, 40);
+            this.checkBox_useTimerDrawing.TabIndex = 11;
+            this.checkBox_useTimerDrawing.Text = "Use alternate GIF drawing method";
+            this.checkBox_useTimerDrawing.UseVisualStyleBackColor = true;
+            this.checkBox_useTimerDrawing.CheckedChanged += new System.EventHandler(this.checkBox_useTimerDrawing_CheckedChanged);
+            // 
+            // button_GetCurrentAlbum
+            // 
+            this.button_GetCurrentAlbum.Location = new System.Drawing.Point(205, 85);
+            this.button_GetCurrentAlbum.Name = "button_GetCurrentAlbum";
+            this.button_GetCurrentAlbum.Size = new System.Drawing.Size(101, 23);
+            this.button_GetCurrentAlbum.TabIndex = 12;
+            this.button_GetCurrentAlbum.Text = "Get Current Album";
+            this.button_GetCurrentAlbum.UseVisualStyleBackColor = true;
+            this.button_GetCurrentAlbum.Click += new System.EventHandler(this.button_GetCurrentAlbum_Click);
+            // 
+            // numericUpDown_gifSpeed
+            // 
+            this.numericUpDown_gifSpeed.Enabled = false;
+            this.numericUpDown_gifSpeed.Location = new System.Drawing.Point(337, 153);
+            this.numericUpDown_gifSpeed.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            this.numericUpDown_gifSpeed.Minimum = new decimal(new int[] { 10, 0, 0, 0 });
+            this.numericUpDown_gifSpeed.Name = "numericUpDown_gifSpeed";
+            this.numericUpDown_gifSpeed.Size = new System.Drawing.Size(61, 20);
+            this.numericUpDown_gifSpeed.TabIndex = 13;
+            this.numericUpDown_gifSpeed.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            this.numericUpDown_gifSpeed.ValueChanged += new System.EventHandler(this.numericUpDown_gifSpeed_ValueChanged);
+            // 
+            // label_cutsomGifSpeed
+            // 
+            this.label_cutsomGifSpeed.Enabled = false;
+            this.label_cutsomGifSpeed.Location = new System.Drawing.Point(218, 155);
+            this.label_cutsomGifSpeed.Name = "label_cutsomGifSpeed";
+            this.label_cutsomGifSpeed.Size = new System.Drawing.Size(116, 23);
+            this.label_cutsomGifSpeed.TabIndex = 14;
+            this.label_cutsomGifSpeed.Text = "Set custom GIF speed:";
+            // 
+            // button_gifSpeedOriginal
+            // 
+            this.button_gifSpeedOriginal.Enabled = false;
+            this.button_gifSpeedOriginal.Location = new System.Drawing.Point(404, 153);
+            this.button_gifSpeedOriginal.Name = "button_gifSpeedOriginal";
+            this.button_gifSpeedOriginal.Size = new System.Drawing.Size(56, 21);
+            this.button_gifSpeedOriginal.TabIndex = 15;
+            this.button_gifSpeedOriginal.Text = "Original";
+            this.button_gifSpeedOriginal.UseVisualStyleBackColor = true;
+            this.button_gifSpeedOriginal.Click += new System.EventHandler(this.button_gifSpeedOriginal_Click);
+            // 
             // Form_Configure
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 316);
+            this.Controls.Add(this.button_gifSpeedOriginal);
+            this.Controls.Add(this.label_cutsomGifSpeed);
+            this.Controls.Add(this.numericUpDown_gifSpeed);
+            this.Controls.Add(this.button_GetCurrentAlbum);
+            this.Controls.Add(this.checkBox_useTimerDrawing);
             this.Controls.Add(this.label_versionInfo);
             this.Controls.Add(this.button_updater);
             this.Controls.Add(this.checkBox_roundPfp);
@@ -177,18 +242,29 @@ namespace MusicBeePlugin.Form.Configure
             this.Controls.Add(this.textbox_username);
             this.Controls.Add(this.label_username);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Icon = ((System.Drawing.Icon) (resources.GetObject("$this.Icon")));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form_Configure";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "User Cosmetics Configuration";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form_Configure_FormClosing);
             this.Load += new System.EventHandler(this.Form_Configure_Load);
-            ((System.ComponentModel.ISupportInitialize) (this.picbox_pfp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picbox_pfp)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_gifSpeed)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.Label label_cutsomGifSpeed;
+        
+        private System.Windows.Forms.NumericUpDown numericUpDown_gifSpeed;
+        
+        private System.Windows.Forms.Button button_GetCurrentAlbum;
+
+        private System.Windows.Forms.Button button_gifSpeedOriginal;
+
+        private System.Windows.Forms.CheckBox checkBox_useTimerDrawing;
+        
         private System.Windows.Forms.Label label_versionInfo;
         
         private System.Windows.Forms.Button button_updater;

@@ -11,17 +11,19 @@ using System.Windows.Media.Imaging;
 
 namespace MusicBeePlugin.Drawing
 {
-    public class GifHandler
+    public class GifHandler : IDisposable
     {
-        private readonly Image _gif;
+        private readonly Bitmap _gif;
         private readonly FrameDimension _dimension;
         private readonly int _frameCount;
         private string _gifPath;
         
         private bool _roundCorners;
-        
-        private readonly GifScope _scope;
+        public bool IsGif { get; }
+        public Bitmap Bitmap => _gif;
 
+        private readonly GifScope _scope;
+        
         public static string GifPathMainPanel { get; private set; }
         public static string GifPathForm { get; private set; }
         
@@ -35,6 +37,7 @@ namespace MusicBeePlugin.Drawing
             _roundCorners = roundCorners;
             _scope = scope;
             _gifPath = gifPath;
+            IsGif = ImageAnimator.CanAnimate(_gif);
         }
         
 
@@ -58,6 +61,19 @@ namespace MusicBeePlugin.Drawing
             return gifFrames;
         }
 
+        public Bitmap[] RawFramesResizeGif(int width, int height)
+        {
+            Bitmap[] gifFrames = MakeGifArray();
+
+            for (int i = 0; i < gifFrames.Length; i++)
+            {
+                gifFrames[i].Tag = "gifFrame";
+                gifFrames[i] = (Bitmap)PaintManager.P_ResizeImage(gifFrames[i], width, height);
+            }
+
+            return gifFrames;
+        }
+
         /// <returns>Path to new gif</returns>
         public string ResizeGif(int width, int height)
         {
@@ -71,6 +87,7 @@ namespace MusicBeePlugin.Drawing
                 
                 bitmapFrames.Add(BitmapFrame.Create(Imaging.CreateBitmapSourceFromHBitmap(gifFrames[i].GetHbitmap(), IntPtr.Zero, new Int32Rect(0,0, width,height), BitmapSizeOptions.FromEmptyOptions())));
             }
+            foreach(Bitmap bitmap in gifFrames) bitmap.Dispose();
 
             return ReassembleGif(ref bitmapFrames);
         }
@@ -87,7 +104,8 @@ namespace MusicBeePlugin.Drawing
                 
                 bitmapFrames.Add(BitmapFrame.Create(Imaging.CreateBitmapSourceFromHBitmap(gifFrames[i].GetHbitmap(), IntPtr.Zero, new Int32Rect(0,0, width,height), BitmapSizeOptions.FromEmptyOptions())));
             }
-
+            foreach(Bitmap bitmap in gifFrames) bitmap.Dispose();
+            
             return ReassembleGif(ref bitmapFrames);
         }
         
@@ -146,6 +164,12 @@ namespace MusicBeePlugin.Drawing
             return new[] { byte.Parse(byte1), byte.Parse(byte2) };
         }
 
+        public int GetFrameDelayMs()
+        {
+            byte[] array = GetFrameDelay();
+            return Convert.ToInt32((byte)(array[0] + array[1]) + "0");
+        }
+
         private byte TryTransparency()
         {
             try { _gif.GetPropertyItem(20740); }
@@ -187,7 +211,13 @@ namespace MusicBeePlugin.Drawing
             int randInt = random.Next(0,10);
             for (int i = 0; i < usedNum.Count; i++)
             {
-                if (randInt == usedNum[i])
+                if (usedNum.Count >= 10) // if this conditional was met that means something went seriously wrong and is impractical to continue with execution 
+                {
+                    System.Windows.Forms.Application.Restart();
+                    break;
+                }
+                
+                if (randInt == usedNum[i] && !(usedNum.Count >= 10))
                 {
                     randInt = random.Next(0, 10);
                     i = -1;
@@ -243,6 +273,11 @@ namespace MusicBeePlugin.Drawing
         private static void PopulateFileListVoid(GifScope scope)
         {
             foreach (var VARIABLE in PopulateFileList(scope));
+        }
+
+        public void Dispose()
+        {
+            _gif.Dispose();
         }
     }
 }

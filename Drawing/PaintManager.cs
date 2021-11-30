@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MusicBeePlugin.Drawing
 {
@@ -39,7 +40,6 @@ namespace MusicBeePlugin.Drawing
 
             SetColorsFromSkin();
             LoadSettings();
-
         }
 
         public void SetArgs(ref PaintEventArgs args)
@@ -80,6 +80,9 @@ namespace MusicBeePlugin.Drawing
             
             TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
             
+            // timer.Stop();
+            // timerFrames = new GifHandler(_pfpPath, GifHandler.GifScope.MainPanel).MakeGifArray();
+            // timer.Start();
             _picBox.Image = ImageHandler(); // Make async somehow 
         }
 
@@ -87,30 +90,45 @@ namespace MusicBeePlugin.Drawing
         {
             string currentPath = _pfpPath;
 
-            bool canAnimate = ImageAnimator.CanAnimate(new Bitmap(_pfpPath));
-            
-            if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || !_drawRounded)
+            //bool canAnimate = ImageAnimator.CanAnimate(new Bitmap(_pfpPath));
+            using (GifHandler handler = new GifHandler(currentPath, GifHandler.GifScope.MainPanel))
             {
-                if (canAnimate)
+                timer.Stop();
+                if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || !_drawRounded)
                 {
-                    if (_drawRounded) goto DrawRounded;
-                    _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeGif(_pfpSize.Width, _pfpSize.Height));
-                    return _pfp;
-                }
+                    if (handler.IsGif)
+                    {
+                        frameCount = 0;
+                        timerFrames = null;
 
-                _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width, _pfpSize.Height);
-            }
+                        timerFrames = handler.RawFramesResizeGif(_pfpSize.Width, _pfpSize.Height);
+                        timer.Interval = handler.GetFrameDelayMs();
+
+
+                        timer.Start();
+                        _pfp = null;
+                        return null;
+                    
+                        if (_drawRounded) goto DrawRounded;
+                        _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeGif(_pfpSize.Width, _pfpSize.Height));
+                        return _pfp;
+                    }
+
+                    _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width, _pfpSize.Height);
+                }
             
-            DrawRounded:
-            if (_drawRounded)
-            {
-                if (canAnimate)
+                DrawRounded:
+                if (_drawRounded)
                 {
-                    if ((string)_pfp.Tag != currentPath) _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeAndRoundGifCorners(_pfpSize.Width, _pfpSize.Height));
-                    return _pfp;
+                    if (handler.IsGif)
+                    {
+                        if ((string)_pfp.Tag != currentPath) _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeAndRoundGifCorners(_pfpSize.Width, _pfpSize.Height));
+                        return _pfp;
+                    }
+                
+                    if ((string)_pfp.Tag != currentPath) _pfp = ApplyRoundCorners();
                 }
                 
-                if ((string)_pfp.Tag != currentPath) _pfp = ApplyRoundCorners();
             }
             
             return _pfp;
@@ -189,9 +207,10 @@ namespace MusicBeePlugin.Drawing
         {
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
             {
-                GifHandler handler = new GifHandler((string) image.Tag, GifHandler.GifScope.Form);
-                
-                return new Bitmap(handler.ResizeGif(width,height));
+                using (GifHandler handler = new GifHandler((string)image.Tag, GifHandler.GifScope.Form))
+                {
+                    return new Bitmap(handler.ResizeGif(width,height));
+                }
             }
             
             Rectangle destRect = new Rectangle(0, 0, width, height);
@@ -222,9 +241,10 @@ namespace MusicBeePlugin.Drawing
         {
             if (ImageAnimator.CanAnimate(image) && (string)image.Tag != "gifFrame")
             {
-                GifHandler handler = new GifHandler((string) image.Tag, GifHandler.GifScope.Form,true);
-
-                return new Bitmap(handler.ResizeAndRoundGifCorners(width, height));
+                using (GifHandler handler = new GifHandler((string)image.Tag, GifHandler.GifScope.Form, true))
+                {
+                    return new Bitmap(handler.ResizeAndRoundGifCorners(width, height));
+                }
             }
             
             Rectangle plaster = new Rectangle(0, 0, width, height);
@@ -279,6 +299,26 @@ namespace MusicBeePlugin.Drawing
 
             _controlMain.Invoke((Action)PicBoxMake);
             _picBox.Paint += picBox_Paint;
+        }
+
+        private static System.Timers.Timer timer;
+        private static Bitmap[] timerFrames;
+        private static int frameCount;
+        public void MakeTimer()
+        {
+            timer = new System.Timers.Timer();
+            timer.Interval = 60;
+
+            timer.Elapsed += Timer_Elapsed;
+            
+            // timer.Start();
+        }
+        
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            _picBox.Image = timerFrames[frameCount];
+            frameCount++;
+            if (frameCount >= timerFrames.Length) frameCount = 0;
         }
 
         private void picBox_Paint(object sender, PaintEventArgs e)
