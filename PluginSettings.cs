@@ -19,7 +19,7 @@ namespace MusicBeePlugin
             _mbAPI = mbAPI;
             _filePath = _mbAPI.Setting_GetPersistentStoragePath.Invoke() + _fileName;
             
-            if (!Exists()) FirstTimeSetup();
+            if (!File.Exists(_filePath)) FirstTimeSetup();
             else _xmlDoc.Load(_filePath);
         }
 
@@ -79,6 +79,7 @@ namespace MusicBeePlugin
             {
                 nodeList[0].InnerText = value;
                 _xmlDoc.Save(_filePath);
+                OnValueChanged(new ValueChangedEventArgs{KeyName = key, Value = value});
                 return;
             }
 
@@ -96,10 +97,18 @@ namespace MusicBeePlugin
             new Form_Popup($"Key '{key}' not found. This program's version may be outdated, please make sure that you are up to date with the GitHub repository.", "SetFromKey Error");
         }
 
+        public event EventHandler<ValueChangedEventArgs> ValueChanged;
 
-        public bool Exists()
+        protected virtual void OnValueChanged(ValueChangedEventArgs e)
         {
-            return File.Exists(_filePath);
+            EventHandler<ValueChangedEventArgs> handler = ValueChanged;
+            handler?.Invoke(this, e);
+        }
+
+        public class ValueChangedEventArgs : EventArgs
+        {
+            public string KeyName { get; set; }
+            public string Value { get; set; }
         }
     }
 }

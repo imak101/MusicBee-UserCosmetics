@@ -1,4 +1,6 @@
 using  System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
@@ -25,6 +27,8 @@ namespace MusicBeePlugin.Form.Configure
         private bool _timerDrawCheck;
         private int _customGifSpeed;
         private int _originalGifSpeed;
+        private bool _anyValueCurrentlyChanged = false;
+
         
         private Bitmap[] _gifFrames;
         private int _currentGifFrame;
@@ -35,6 +39,7 @@ namespace MusicBeePlugin.Form.Configure
             _musicBeeApiInterface = mbInterface;
             _settings = settings;
             _timer.Elapsed += Timer_Elapsed;
+            _settings.ValueChanged += settings_ValueChanged;
         }
 
         private async void Form_Configure_Load(object sender, EventArgs e)
@@ -182,6 +187,7 @@ namespace MusicBeePlugin.Form.Configure
                 using (GifHandler handler = new GifHandler(_filePath, GifHandler.GifScope.Form))
                 {
                     handler.Bitmap.Tag = _filePath;
+                    // if (_filePath != _settings.GetFromKey("pfpPath")) button_restore.Enabled = true;
 
                     _timer.Stop();
                     if (handler.IsGif)
@@ -378,11 +384,35 @@ namespace MusicBeePlugin.Form.Configure
 
         private void button_gifSpeedOriginal_Click(object sender, EventArgs e) => numericUpDown_gifSpeed.Value = _originalGifSpeed;
 
+        private void button_restore_Click(object sender, EventArgs e)
+        {
+            _settingsBackup.RestoreSettings();
+            Form_Configure_Load(this, EventArgs.Empty);
+            button_restore.Enabled = false;
+            Focus();
+        }
+
+        private void settings_ValueChanged(object sender, PluginSettings.ValueChangedEventArgs e)
+        {
+            //if (_settingsBackup != null && !_settingsBackup.ReadOnlyValueDictionary.Keys.All(key => key != e.KeyName)) return; 
+            if (_settingsBackup != null && _settingsBackup.ReadOnlyValueDictionary.ContainsKey(e.KeyName) && e.Value != _settingsBackup.ReadOnlyValueDictionary[e.KeyName])
+            {
+                button_restore.Enabled = true;
+                _anyValueCurrentlyChanged = true;
+                return;
+            }
+            // if (_anyValueCurrentlyChanged) return;
+            button_restore.Enabled = false;
+            _anyValueCurrentlyChanged = false;            
+        }
+        
         private class SettingsBackup
         {
             public string RoundPfpCheck { get; }
             public string CustomGifSpeed { get; }
             public string UseTimerDrawing { get; }
+            public ReadOnlyDictionary<string, string> ReadOnlyValueDictionary { get; } 
+            
             private PluginSettings _settings;
             
             public SettingsBackup(string roundPfpCheck, string customGifSpeed, string useTimerDrawing, ref PluginSettings pluginSettings)
@@ -391,6 +421,12 @@ namespace MusicBeePlugin.Form.Configure
                 CustomGifSpeed = customGifSpeed;
                 UseTimerDrawing = useTimerDrawing;
                 _settings = pluginSettings;
+                ReadOnlyValueDictionary = new ReadOnlyDictionary<string,string>(new Dictionary<string,string>
+                {
+                    {"roundPfpCheck", roundPfpCheck}, 
+                    {"customGifSpeed", customGifSpeed}, 
+                    {"useTimerDrawing", useTimerDrawing}
+                });
             }
 
             public void RestoreSettings()

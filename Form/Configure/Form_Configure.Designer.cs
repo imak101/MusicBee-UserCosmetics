@@ -223,12 +223,14 @@ namespace MusicBeePlugin.Form.Configure
             // 
             // button_restore
             // 
+            this.button_restore.Enabled = false;
             this.button_restore.Location = new System.Drawing.Point(312, 85);
             this.button_restore.Name = "button_restore";
             this.button_restore.Size = new System.Drawing.Size(101, 23);
             this.button_restore.TabIndex = 16;
             this.button_restore.Text = "Restore Info";
             this.button_restore.UseVisualStyleBackColor = true;
+            this.button_restore.Click += new System.EventHandler(this.button_restore_Click);
             // 
             // Form_Configure
             // 
