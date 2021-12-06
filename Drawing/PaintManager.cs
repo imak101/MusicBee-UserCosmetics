@@ -13,6 +13,8 @@ namespace MusicBeePlugin.Drawing
         private readonly Plugin.MusicBeeApiInterface _mbAPI;
         private readonly PluginSettings _settings;
 
+        private const string PROFILE_NOT_SET_ERR_MSG = "Please configure a user profile.";
+
         private static readonly Size _pfpSize = new Size(60,60);
 
         private Color _bgColor;
@@ -94,7 +96,7 @@ namespace MusicBeePlugin.Drawing
 
             CalculateCenter_Point();
             
-            TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
+            TextRenderer.DrawText(_eventArgs.Graphics, _username==string.Empty? PROFILE_NOT_SET_ERR_MSG : _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
             
             _picBox.Image = ImageHandler(); // Make async somehow 
         }
@@ -329,7 +331,7 @@ namespace MusicBeePlugin.Drawing
             
             if (_pfp == null || !_timer.Enabled)
             {
-                _pfp = !_timer.Enabled ? ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width,_pfpSize.Height) : new Bitmap(_pfpSize.Width, _pfpSize.Height);
+                _pfp = !_timer.Enabled && _pfpPath != string.Empty ? ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width,_pfpSize.Height) : new Bitmap(_pfpSize.Width, _pfpSize.Height);
             }
             
             _pfpPoint.X = _controlMain.Size.Width / 2 - _pfp.Width / 2;

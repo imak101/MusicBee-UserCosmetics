@@ -105,7 +105,7 @@ namespace MusicBeePlugin.Form.Configure
         
         private void button_cancel_Click(object sender, EventArgs e)
         {
-            _settingsBackup.RestoreSettings();
+            _settingsBackup?.RestoreSettings();
             Close();
         }
         
@@ -295,7 +295,7 @@ namespace MusicBeePlugin.Form.Configure
             GC.Collect();
             
             if (new System.Diagnostics.StackTrace().GetFrames().Any(x => x.GetMethod().Name == "Close")) return;
-            _settingsBackup.RestoreSettings(); // only restore settings on X click 
+            _settingsBackup?.RestoreSettings(); // only restore settings on X click 
         }
 
         private void checkBox_useTimerDrawing_CheckedChanged(object sender, EventArgs e)
