@@ -32,6 +32,7 @@ namespace MusicBeePlugin.Form.Configure
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_Configure));
             this.label_username = new System.Windows.Forms.Label();
             this.textbox_username = new System.Windows.Forms.TextBox();
@@ -51,6 +52,7 @@ namespace MusicBeePlugin.Form.Configure
             this.label_cutsomGifSpeed = new System.Windows.Forms.Label();
             this.button_gifSpeedOriginal = new System.Windows.Forms.Button();
             this.button_restore = new System.Windows.Forms.Button();
+            this.toolTip_formConfigure = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picbox_pfp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown_gifSpeed)).BeginInit();
             this.SuspendLayout();
@@ -174,11 +176,12 @@ namespace MusicBeePlugin.Form.Configure
             this.checkBox_useTimerDrawing.Enabled = false;
             this.checkBox_useTimerDrawing.Location = new System.Drawing.Point(218, 114);
             this.checkBox_useTimerDrawing.Name = "checkBox_useTimerDrawing";
-            this.checkBox_useTimerDrawing.Size = new System.Drawing.Size(189, 40);
+            this.checkBox_useTimerDrawing.Size = new System.Drawing.Size(263, 40);
             this.checkBox_useTimerDrawing.TabIndex = 11;
-            this.checkBox_useTimerDrawing.Text = "Use alternate GIF drawing method";
+            this.checkBox_useTimerDrawing.Text = "Use alternate GIF drawing method (recommended)";
             this.checkBox_useTimerDrawing.UseVisualStyleBackColor = true;
             this.checkBox_useTimerDrawing.CheckedChanged += new System.EventHandler(this.checkBox_useTimerDrawing_CheckedChanged);
+            this.checkBox_useTimerDrawing.MouseHover += new System.EventHandler(this.checkBox_useTimerDrawing_MouseHover);
             // 
             // button_GetCurrentAlbum
             // 
@@ -210,6 +213,7 @@ namespace MusicBeePlugin.Form.Configure
             this.label_cutsomGifSpeed.Size = new System.Drawing.Size(116, 23);
             this.label_cutsomGifSpeed.TabIndex = 14;
             this.label_cutsomGifSpeed.Text = "Set custom GIF speed:";
+            this.label_cutsomGifSpeed.MouseHover += new System.EventHandler(this.label_customGifSpeed_MouseHover);
             // 
             // button_gifSpeedOriginal
             // 
@@ -268,6 +272,8 @@ namespace MusicBeePlugin.Form.Configure
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolTip toolTip_formConfigure;
 
         private System.Windows.Forms.Button button_restore;
         

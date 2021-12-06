@@ -388,6 +388,16 @@ namespace MusicBeePlugin.Form.Configure
             button_restore.Enabled = false;
         }
         
+        private void checkBox_useTimerDrawing_MouseHover(object sender, EventArgs e)
+        {
+            toolTip_formConfigure.SetToolTip(checkBox_useTimerDrawing, "Recommended. Enable to use custom gif speed. This drawing method is faster and lookers clearer.");
+        }
+
+        private void label_customGifSpeed_MouseHover(object sender, EventArgs e)
+        {
+            toolTip_formConfigure.SetToolTip(label_cutsomGifSpeed, "Change delay in between frames, in milliseconds. The higher the number, the slower the animation.");
+        }
+        
         private class SettingsBackup
         {
             public string PfpPath { get; }
