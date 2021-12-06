@@ -20,15 +20,13 @@ namespace MusicBeePlugin.Form.Configure
         private bool _roundPfpChecked;
         private static readonly Size _picBoxSize = new Size(200, 200); 
         private PluginSettings _settings;
-        private Plugin.MusicBeeApiInterface _musicBeeApiInterface;
-        private System.Timers.Timer _timer = new System.Timers.Timer();
+        private readonly Plugin.MusicBeeApiInterface _musicBeeApiInterface;
+        private readonly System.Timers.Timer _timer = new System.Timers.Timer();
         private SettingsBackup _settingsBackup;
         private bool _disablingGifPanel;
         private bool _timerDrawCheck;
         private int _customGifSpeed;
         private int _originalGifSpeed;
-        private bool _anyValueCurrentlyChanged = false;
-
         
         private Bitmap[] _gifFrames;
         private int _currentGifFrame;
@@ -64,7 +62,7 @@ namespace MusicBeePlugin.Form.Configure
             checkBox_roundPfp.Checked = _roundPfpChecked;
             textbox_username.Text = _username;
             
-            _settingsBackup = new SettingsBackup(_roundPfpChecked.ToString(), _customGifSpeed.ToString(), _timerDrawCheck.ToString(), ref _settings);
+            _settingsBackup = new SettingsBackup(_filePath, _username, _roundPfpChecked.ToString(), _customGifSpeed.ToString(), _timerDrawCheck.ToString(), ref _settings);
             
             picbox_pfp.Image = ImageHandler();
             
@@ -148,36 +146,7 @@ namespace MusicBeePlugin.Form.Configure
             }
         }
         
-
-        private Image ImageHandler2()
-        {
-            picbox_pfp.Image?.Dispose();
-            try
-            {
-                using (Image pfp = new Bitmap(_filePath))
-                {
-                    pfp.Tag = _filePath;
-                    
-                    if (_roundPfpChecked)
-                    {
-                        return PaintManager.P_ApplyRoundedCorners(pfp, _picBoxSize.Width, _picBoxSize.Height);
-                    }
-
-                    return PaintManager.P_ResizeImage(pfp, _picBoxSize.Width, _picBoxSize.Height);
-                }
-            }
-            catch (FileNotFoundException e)
-            {
-                new Form_Popup($"The file {e.Message} was not found.", "File not found");
-                _settings.SetFromKey("pfpPath", string.Empty);
-            }
-            catch (ArgumentException)
-            {
-                new Form_Popup("There was an error loading your profile. Please re-enter your details.", "Error");
-            }
-
-            return null;
-        }
+        
         
         private Image ImageHandler()
         {
@@ -186,8 +155,8 @@ namespace MusicBeePlugin.Form.Configure
             {
                 using (GifHandler handler = new GifHandler(_filePath, GifHandler.GifScope.Form))
                 {
+                    _settings.SetFromKey("pfpPath", _filePath, true);
                     handler.Bitmap.Tag = _filePath;
-                    // if (_filePath != _settings.GetFromKey("pfpPath")) button_restore.Enabled = true;
 
                     _timer.Stop();
                     if (handler.IsGif)
@@ -321,7 +290,9 @@ namespace MusicBeePlugin.Form.Configure
         private void Form_Configure_FormClosing(object sender, FormClosingEventArgs e)
         {
             picbox_pfp.Image?.Dispose();
+            foreach(Bitmap bitmap in _gifFrames ?? new[] {new Bitmap(1,1)}) bitmap?.Dispose();
             _timer?.Dispose();
+            GC.Collect();
             
             if (new System.Diagnostics.StackTrace().GetFrames().Any(x => x.GetMethod().Name == "Close")) return;
             _settingsBackup.RestoreSettings(); // only restore settings on X click 
@@ -368,6 +339,11 @@ namespace MusicBeePlugin.Form.Configure
             _timer.Interval = (int)decimal.Round(numericUpDown_gifSpeed.Value);
         }
 
+        private void textbox_username_TextChanged(object sender, EventArgs e)
+        {
+            _settings.SetFromKey("username", textbox_username.Text, true);
+        }
+
         private void ToggleGifSpeedControls(bool toggleOn = false)
         {
             if (toggleOn)
@@ -394,35 +370,49 @@ namespace MusicBeePlugin.Form.Configure
 
         private void settings_ValueChanged(object sender, PluginSettings.ValueChangedEventArgs e)
         {
-            //if (_settingsBackup != null && !_settingsBackup.ReadOnlyValueDictionary.Keys.All(key => key != e.KeyName)) return; 
-            if (_settingsBackup != null && _settingsBackup.ReadOnlyValueDictionary.ContainsKey(e.KeyName) && e.Value != _settingsBackup.ReadOnlyValueDictionary[e.KeyName])
+            if (_settingsBackup == null) return;
+            
+            if (_settingsBackup.ReadOnlyValueDictionary.ContainsKey(e.KeyName) && e.Value != _settingsBackup.ReadOnlyValueDictionary[e.KeyName] && _settingsBackup.CurrentlyChangedValues.All(c => c != e.KeyName))
             {
+                _settingsBackup.CurrentlyChangedValues.Add(e.KeyName);
                 button_restore.Enabled = true;
-                _anyValueCurrentlyChanged = true;
                 return;
             }
-            // if (_anyValueCurrentlyChanged) return;
+            
+            if (_settingsBackup.CurrentlyChangedValues.Contains(e.KeyName) || e.KeyName == "pfpPath")
+            {
+                if (e.Value == _settingsBackup.ReadOnlyValueDictionary[e.KeyName]) _settingsBackup.CurrentlyChangedValues.Remove(e.KeyName);
+                if (_settingsBackup.CurrentlyChangedValues.Count >= 1) return;
+            }
+            
             button_restore.Enabled = false;
-            _anyValueCurrentlyChanged = false;            
         }
         
         private class SettingsBackup
         {
+            public string PfpPath { get; }
+            public string Username { get; }
             public string RoundPfpCheck { get; }
             public string CustomGifSpeed { get; }
             public string UseTimerDrawing { get; }
-            public ReadOnlyDictionary<string, string> ReadOnlyValueDictionary { get; } 
+            public ReadOnlyDictionary<string, string> ReadOnlyValueDictionary { get; }
+
+            public List<string> CurrentlyChangedValues = new List<string>();
+
+            private readonly PluginSettings _settings;
             
-            private PluginSettings _settings;
-            
-            public SettingsBackup(string roundPfpCheck, string customGifSpeed, string useTimerDrawing, ref PluginSettings pluginSettings)
+            public SettingsBackup(string pfpPath, string username, string roundPfpCheck, string customGifSpeed, string useTimerDrawing, ref PluginSettings pluginSettings)
             {
+                PfpPath = pfpPath;
+                Username = username;
                 RoundPfpCheck = roundPfpCheck;
                 CustomGifSpeed = customGifSpeed;
                 UseTimerDrawing = useTimerDrawing;
                 _settings = pluginSettings;
                 ReadOnlyValueDictionary = new ReadOnlyDictionary<string,string>(new Dictionary<string,string>
                 {
+                    {"pfpPath", pfpPath},
+                    {"username", username},
                     {"roundPfpCheck", roundPfpCheck}, 
                     {"customGifSpeed", customGifSpeed}, 
                     {"useTimerDrawing", useTimerDrawing}
@@ -431,6 +421,8 @@ namespace MusicBeePlugin.Form.Configure
 
             public void RestoreSettings()
             {
+                _settings.SetFromKey("pfpPath",PfpPath, true);
+                _settings.SetFromKey("username", Username, true);
                 _settings.SetFromKey("roundPfpCheck", RoundPfpCheck, true);
                 _settings.SetFromKey("customGifSpeed", CustomGifSpeed, true);
                 _settings.SetFromKey("useTimerDrawing",UseTimerDrawing, true);

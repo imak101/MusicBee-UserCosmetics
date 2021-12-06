@@ -71,6 +71,7 @@ namespace MusicBeePlugin.Form.Configure
             this.textbox_username.Name = "textbox_username";
             this.textbox_username.Size = new System.Drawing.Size(135, 20);
             this.textbox_username.TabIndex = 1;
+            this.textbox_username.TextChanged += new System.EventHandler(this.textbox_username_TextChanged);
             // 
             // label_pfp
             // 

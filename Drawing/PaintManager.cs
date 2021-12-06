@@ -22,6 +22,8 @@ namespace MusicBeePlugin.Drawing
         private string _username;
         private string _oldPfpPath;
 
+        private int _customGifSpeed;
+        
         private Point _usernamePoint; //= new Point(105,83);     < -- Fallback values
         private Point _pfpPoint; //= new Point(100, 20);
 
@@ -32,11 +34,18 @@ namespace MusicBeePlugin.Drawing
         private PictureBox _picBox;
 
         private bool _drawRounded;
+        private bool _useTimerDrawing;
+        private bool _oldUseTimerDrawing;
+        
+        private static System.Timers.Timer _timer = new System.Timers.Timer();
+        private static Bitmap[] _gifFrames;
+        private static int _currentGifFrame;
         
         public PaintManager(ref Plugin.MusicBeeApiInterface mbAPI, ref PluginSettings settings)
         {
             _mbAPI = mbAPI;
             _settings = settings;
+            _timer.Elapsed += Timer_Elapsed;
 
             SetColorsFromSkin();
             LoadSettings();
@@ -60,18 +69,25 @@ namespace MusicBeePlugin.Drawing
 
             try
             {
-                _drawRounded = Convert.ToBoolean(_settings.GetFromKey("roundPfpCheck"));
+                _drawRounded = bool.Parse(_settings.GetFromKey("roundPfpCheck"));
+                _customGifSpeed = int.Parse(_settings.GetFromKey("customGifSpeed"));
+                _useTimerDrawing = bool.Parse(_settings.GetFromKey("useTimerDrawing"));
             }
             catch (FormatException)
             {
                 _settings.SetFromKey("roundPfpCheck", false.ToString(), true); //TODO: safety key
+                _settings.SetFromKey("customGifSpeed", 10.ToString(), true);
+                _settings.SetFromKey("useTimerDrawing", false.ToString(), true);
                 _drawRounded = false;
+                _customGifSpeed = 10;
+                _useTimerDrawing = false;
             }
         }
 
         public void MainPainter()
         {
             _oldPfpPath = _pfpPath;
+            _oldUseTimerDrawing = _useTimerDrawing;
             LoadSettings();
 
             _eventArgs.Graphics.Clear(_bgColor);
@@ -80,67 +96,48 @@ namespace MusicBeePlugin.Drawing
             
             TextRenderer.DrawText(_eventArgs.Graphics, _username, SystemFonts.CaptionFont, _usernamePoint, _fgColor);
             
-            // timer.Stop();
-            // timerFrames = new GifHandler(_pfpPath, GifHandler.GifScope.MainPanel).MakeGifArray();
-            // timer.Start();
             _picBox.Image = ImageHandler(); // Make async somehow 
         }
-
+        
         private Image ImageHandler()
         {
             string currentPath = _pfpPath;
+            _picBox.Image?.Dispose();
 
-            //bool canAnimate = ImageAnimator.CanAnimate(new Bitmap(_pfpPath));
             using (GifHandler handler = new GifHandler(currentPath, GifHandler.GifScope.MainPanel))
             {
-                timer.Stop();
-                if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || !_drawRounded)
+                _timer.Stop();
+                if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || _useTimerDrawing != _oldUseTimerDrawing)
                 {
                     if (handler.IsGif)
                     {
-                        frameCount = 0;
-                        timerFrames = null;
-
-                        timerFrames = handler.RawFramesResizeGif(_pfpSize.Width, _pfpSize.Height);
-                        timer.Interval = handler.GetFrameDelayMs();
-
-
-                        timer.Start();
-                        _pfp = null;
-                        return null;
-                    
-                        if (_drawRounded) goto DrawRounded;
-                        _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeGif(_pfpSize.Width, _pfpSize.Height));
+                        if (_gifFrames != null) foreach(Bitmap bitmap in _gifFrames) bitmap.Dispose();
+                        
+                        if (_useTimerDrawing)
+                        {
+                            _currentGifFrame = 0;
+                            _gifFrames = handler.RawFramesResizeGif(_picBox.Size.Width, _picBox.Size.Height);
+                            _picBox.Image = null;
+                            _timer.Interval = _customGifSpeed;
+                            _timer.Start();
+                            return _pfp = null;
+                        }
+                        
+                        _pfp = new Bitmap(handler.ResizeGif(_pfpSize.Width, _pfpSize.Height));
                         return _pfp;
                     }
 
                     _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width, _pfpSize.Height);
                 }
-            
-                DrawRounded:
-                if (_drawRounded)
-                {
-                    if (handler.IsGif)
-                    {
-                        if ((string)_pfp.Tag != currentPath) _pfp = new Bitmap(new GifHandler(currentPath, GifHandler.GifScope.MainPanel).ResizeAndRoundGifCorners(_pfpSize.Width, _pfpSize.Height));
-                        return _pfp;
-                    }
-                
-                    if ((string)_pfp.Tag != currentPath) _pfp = ApplyRoundCorners();
-                }
-                
             }
-            
             return _pfp;
         }
-
+        
         private Bitmap ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
             var destImage = new Bitmap(width, height);
             
-            //destImage.SetResolution(image.HorizontalResolution >= 72? 95 : image.HorizontalResolution, image.VerticalResolution >= 72? 95 : image.VerticalResolution);
-            //destImage.SetResolution(image.HorizontalResolution,image.VerticalResolution); //TODO: Remove if above solution suffices
             destImage.SetResolution(96,96);
             
             using (var graphics = Graphics.FromImage(destImage))
@@ -301,24 +298,11 @@ namespace MusicBeePlugin.Drawing
             _picBox.Paint += picBox_Paint;
         }
 
-        private static System.Timers.Timer timer;
-        private static Bitmap[] timerFrames;
-        private static int frameCount;
-        public void MakeTimer()
-        {
-            timer = new System.Timers.Timer();
-            timer.Interval = 60;
-
-            timer.Elapsed += Timer_Elapsed;
-            
-            // timer.Start();
-        }
-        
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            _picBox.Image = timerFrames[frameCount];
-            frameCount++;
-            if (frameCount >= timerFrames.Length) frameCount = 0;
+            _picBox.Image = _gifFrames[_currentGifFrame];
+            _currentGifFrame++;
+            if (_currentGifFrame >= _gifFrames.Length) _currentGifFrame = 0;
         }
 
         private void picBox_Paint(object sender, PaintEventArgs e)
@@ -341,11 +325,11 @@ namespace MusicBeePlugin.Drawing
 
         private void CalculateCenter_Point()
         {
-            _picBox = (PictureBox) _controlMain.Controls["picBox"];
+            _picBox = _picBox ?? (PictureBox) _controlMain.Controls["picBox"];
             
-            if (_pfp == null)
+            if (_pfp == null || !_timer.Enabled)
             {
-                _pfp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width,_pfpSize.Height);
+                _pfp = !_timer.Enabled ? ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width,_pfpSize.Height) : new Bitmap(_pfpSize.Width, _pfpSize.Height);
             }
             
             _pfpPoint.X = _controlMain.Size.Width / 2 - _pfp.Width / 2;
@@ -357,6 +341,8 @@ namespace MusicBeePlugin.Drawing
             _picBox.Location = _pfpPoint;
             _picBox.Size = _pfpSize;
             _picBox.SizeMode = PictureBoxSizeMode.Zoom;
+
+            _pfp = null;
         }
     }
 }

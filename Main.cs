@@ -163,7 +163,6 @@ namespace MusicBeePlugin
             panel.Paint += panel_Paint;
             FormControlMain = panel;
             _paintManager.MakePicBox();
-            _paintManager.MakeTimer();
             return Convert.ToInt32(100 * dpiScaling);
         }
 

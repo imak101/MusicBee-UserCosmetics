@@ -79,7 +79,7 @@ namespace MusicBeePlugin
             {
                 nodeList[0].InnerText = value;
                 _xmlDoc.Save(_filePath);
-                OnValueChanged(new ValueChangedEventArgs{KeyName = key, Value = value});
+                OnValueChanged(new ValueChangedEventArgs(key, value));
                 return;
             }
 
@@ -107,8 +107,14 @@ namespace MusicBeePlugin
 
         public class ValueChangedEventArgs : EventArgs
         {
-            public string KeyName { get; set; }
-            public string Value { get; set; }
+            public string KeyName { get; }
+            public string Value { get; }
+            
+            public ValueChangedEventArgs(string keyName, string value)
+            {
+                KeyName = keyName;
+                Value = value;
+            }
         }
     }
 }
