@@ -75,9 +75,9 @@ namespace MusicBeePlugin.Drawing
                 _customGifSpeed = int.Parse(_settings.GetFromKey("customGifSpeed"));
                 _useTimerDrawing = bool.Parse(_settings.GetFromKey("useTimerDrawing"));
             }
-            catch (FormatException)
+            catch (Exception) 
             {
-                _settings.SetFromKey("roundPfpCheck", false.ToString(), true); //TODO: safety key
+                _settings.SetFromKey("roundPfpCheck", _drawRounded.ToString() ?? "False", true); //TODO: safety key
                 _settings.SetFromKey("customGifSpeed", 10.ToString(), true);
                 _settings.SetFromKey("useTimerDrawing", false.ToString(), true);
                 _drawRounded = false;
