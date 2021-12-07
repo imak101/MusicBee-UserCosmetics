@@ -30,9 +30,9 @@ namespace MusicBeePlugin
             _about.Author = "imak101";
             _about.TargetApplication = "User";   //  the name of a Plugin Storage device or panel header for a dockable panel
             _about.Type = PluginType.PanelView;
-            _about.VersionMajor = 0;  // your plugin version
-            _about.VersionMinor = 2;
-            _about.Revision = 4;
+            _about.VersionMajor = 1;  // your plugin version
+            _about.VersionMinor = 0;
+            _about.Revision = 0;
             _about.MinInterfaceVersion = MinInterfaceVersion;
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);

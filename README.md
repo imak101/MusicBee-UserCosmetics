@@ -2,12 +2,14 @@
 
 MusicBee-UserCosmetics is a [MusicBee](https://getmusicbee.com/) plugin that adds customizations options for the application. Mainly being a profile picture and username panel for the main player view, this plugin will also include various styling options for the said panel.
 
-This plugin's current state is functional and stable enough to be released as an alpha. The current features are limited so please check back often for new additions! 
+With the addition of GIFs as profile pictures, MusicBee-UserCosmetics has finally reached 1.0!
 
 # Features
 
 - Add a picture and username to be displayed in an individual panel
 - Option to round picture's corners
+- Supports GIF images
+- Ability to customize frame delay on GIFs 
 - Includes an auto updater that fetches releases straight from the repo
 
 ### TODO
@@ -15,7 +17,6 @@ This plugin's current state is functional and stable enough to be released as an
 - Add additional positioning options for username and picture
 - Add custom color option for back and foreground
 - Add greeting options
-- Add GIF support(?)
 - And more...
 
 # Installation
@@ -31,7 +32,10 @@ This plugin's current state is functional and stable enough to be released as an
 
 5. Locate "user cosmetics" under "available elements" and drag it to one of the highlighted options. (the location used for the screenshots is the topmost postion of "right sidebar")
 
-# Screenshots (as of v0.2.0)
+# Screenshots (as of v1.0.0)
+
+#### An animated GIF as the profile picture
+![GifMainPanel](Images/GifMainPanel.gif)
 
 ##### The main panel (with rounded corners)
 ![PanelZoom](Images/PanelZoomDark.png)
