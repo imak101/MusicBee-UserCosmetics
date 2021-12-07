@@ -317,6 +317,12 @@ namespace MusicBeePlugin.Form.Configure
         private void button_GetCurrentAlbum_Click(object sender, EventArgs e)
         {
             string coverUrl = _musicBeeApiInterface.NowPlaying_GetArtworkUrl.Invoke();
+            if (coverUrl == null)
+            {
+                new Form_Popup("Cover retrieval failed.", "Error");
+                return;
+            }
+            
             string newPath = null;
                 
             if (Path.GetExtension(coverUrl) == ".tmp")
