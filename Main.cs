@@ -47,10 +47,14 @@ namespace MusicBeePlugin
             _settings = new PluginSettings(ref _mbApiInterface);
             _paintManager = new PaintManager(ref _mbApiInterface, ref _settings);
 
-            if (File.Exists(Application.StartupPath + "/Plugins/old.dll") || File.Exists(_about.PersistentStoragePath + "/Plugins/old.dll"))
+            if (File.Exists(Application.StartupPath + "\\Plugins\\old.dll") || File.Exists(_about.PersistentStoragePath + "Plugins\\old.dll"))
             {
-                try {File.Delete(Application.StartupPath + "/Plugins/old.dll");}
-                catch (Exception) {File.Delete(_about.PersistentStoragePath + "/Plugins/old.dll");}
+                try 
+                { 
+                    File.Delete(Application.StartupPath + "\\Plugins\\old.dll");
+                    File.Delete(_about.PersistentStoragePath + "Plugins\\old.dll");
+                }
+                catch (Exception){}
             }
 
             _mbApiInterface.MB_AddMenuItem.Invoke("mnuTools/User Configure", "User Cosmetics: Configure", (sender, args) => Configure(IntPtr.Zero));
