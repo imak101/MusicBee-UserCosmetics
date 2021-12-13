@@ -86,32 +86,26 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Drawing\GifHandler.cs" />
-    <Compile Include="Drawing\PaintManager.cs" />
-    <Compile Include="Form\Configure\Form_Configure.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form\Configure\Form_Configure.Designer.cs">
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Drawing\GifHandler.cs" />
+    <Compile Include="src\Drawing\PaintManager.cs" />
+    <Compile Include="src\Form\Configure\Form_Configure.cs" />
+    <Compile Include="src\Form\Configure\Form_Configure.Designer.cs">
       <DependentUpon>Form_Configure.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form\Popup\Form_Popup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form\Popup\Form_Popup.Designer.cs">
+    <Compile Include="src\Form\Popup\Form_Popup.cs" />
+    <Compile Include="src\Form\Popup\Form_Popup.Designer.cs">
       <DependentUpon>Form_Popup.cs</DependentUpon>
     </Compile>
-    <Compile Include="MusicBeeInterface.cs" />
-    <Compile Include="PluginSettings.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Updater\ApiRequests.cs" />
-    <Compile Include="Updater\Form\Form_Updater.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Updater\Form\Form_Updater.Designer.cs">
+    <Compile Include="src\Main.cs" />
+    <Compile Include="src\MusicBeeInterface.cs" />
+    <Compile Include="src\PluginSettings.cs" />
+    <Compile Include="src\Updater\ApiRequests.cs" />
+    <Compile Include="src\Updater\Form\Form_Updater.cs" />
+    <Compile Include="src\Updater\Form\Form_Updater.Designer.cs">
       <DependentUpon>Form_Updater.cs</DependentUpon>
     </Compile>
-    <Compile Include="Updater\GitHubRelease.cs" />
+    <Compile Include="src\Updater\GitHubRelease.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
@@ -136,13 +130,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Form\Configure\Form_Configure.resx">
+    <EmbeddedResource Include="src\Form\Configure\Form_Configure.resx">
       <DependentUpon>Form_Configure.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form\Popup\Form_Popup.resx">
+    <EmbeddedResource Include="src\Form\Popup\Form_Popup.resx">
       <DependentUpon>Form_Popup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Updater\Form\Form_Updater.resx">
+    <EmbeddedResource Include="src\Updater\Form\Form_Updater.resx">
       <DependentUpon>Form_Updater.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
@@ -151,9 +145,10 @@
   <!--  </Target>-->
   <Target Name="AfterBuild">
 <!--        <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeUserCosmetics\bin\Debug\mb_UserCosmetics.dll" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
+<!--         <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeUserCosmetics\bin\Debug\mb_UserCosmetics.dll" DestinationFolder="C:\Users\mftre\AppData\Roaming\MusicBee\Plugins" />-->
     <!--    <Copy SourceFiles="C:\Users\mftre\Documents\RiderProjects\MusicBeeSomething1\bin\Debug\mb_Something1.dll.config" DestinationFolder="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
     <!--    <Delete Files="C:\Users\mftre\Downloads\MusicBeePortable_3_4_Update1\MusicBee\AppData\mb_Something1.xml" />-->
 <!--    <Copy SourceFiles="F:\Code\MusicBeePlugin\MusicBeeSomething1\bin\Debug\mb_Something1.dll" DestinationFolder="F:\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
-    <Copy SourceFiles="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeeUserCosmetics\bin\Debug\mb_UserCosmetics.dll" DestinationFolder="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />
+<!--    <Copy SourceFiles="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeeUserCosmetics\bin\Debug\mb_UserCosmetics.dll" DestinationFolder="C:\Users\mftre\Documents\Code\MusicBeePlugin\MusicBeePortable_3_4_Update1\MusicBee\Plugins" />-->
   </Target>
 </Project>
