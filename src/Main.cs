@@ -32,7 +32,7 @@ namespace MusicBeePlugin
             _about.Type = PluginType.PanelView;
             _about.VersionMajor = 1;  // your plugin version
             _about.VersionMinor = 0;
-            _about.Revision = 0;
+            _about.Revision = 1;
             _about.MinInterfaceVersion = MinInterfaceVersion;
             _about.MinApiRevision = MinApiRevision;
             _about.ReceiveNotifications = (ReceiveNotificationFlags.PlayerEvents | ReceiveNotificationFlags.TagEvents);
@@ -116,23 +116,23 @@ namespace MusicBeePlugin
         public void ReceiveNotification(string sourceFileUrl, NotificationType type)
         {
             // perform some action depending on the notification type
-            switch (type)
-            {
-                case NotificationType.PluginStartup:
-                    // perform startup initialisation
-                    switch (_mbApiInterface.Player_GetPlayState())
-                    {
-                        case PlayState.Playing:
-                        case PlayState.Paused:
-                            // ...
-                            break;
-                    }
-                    break;
-                case NotificationType.TrackChanged:
-                    string artist = _mbApiInterface.NowPlaying_GetFileTag(MetaDataType.Artist);
-                    // ...
-                    break;
-            }
+            // switch (type)
+            // {
+            //     case NotificationType.PluginStartup:
+            //         // perform startup initialisation
+            //         switch (_mbApiInterface.Player_GetPlayState())
+            //         {
+            //             case PlayState.Playing:
+            //             case PlayState.Paused:
+            //                 // ...
+            //                 break;
+            //         }
+            //         break;
+            //     case NotificationType.TrackChanged:
+            //         string artist = _mbApiInterface.NowPlaying_GetFileTag(MetaDataType.Artist);
+            //         // ...
+            //         break;
+            // }
         }
 
 
@@ -166,12 +166,13 @@ namespace MusicBeePlugin
             panel.MouseClick += onPanelMainClick;
             panel.Paint += panel_Paint;
             FormControlMain = panel;
-            _paintManager.MakePicBox();
             return Convert.ToInt32(100 * dpiScaling);
         }
 
         private void panel_Paint(object sender, PaintEventArgs e)
         {
+            _paintManager.MakePicBox();
+
             _paintManager.SetArgs(ref e);
             
             e.Graphics.SmoothingMode = SmoothingMode.HighQuality;

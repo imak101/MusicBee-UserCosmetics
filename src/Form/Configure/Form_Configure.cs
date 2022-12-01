@@ -55,7 +55,7 @@ namespace MusicBeePlugin.Form.Configure
             numericUpDown_gifSpeed.Value = _customGifSpeed;
             _timer.Interval = _customGifSpeed;
             
-            _timerDrawCheck = Convert.ToBoolean(_settings.GetFromKey("useTimerDrawing") ?? "false");
+            _timerDrawCheck = Convert.ToBoolean(_settings.GetFromKey("useTimerDrawing") ?? "true");
             checkBox_useTimerDrawing.Checked = _timerDrawCheck;
             ToggleGifSpeedControls(_timerDrawCheck);
             
@@ -331,6 +331,7 @@ namespace MusicBeePlugin.Form.Configure
                 if (newPath.Any(c => Path.GetInvalidFileNameChars().Contains(c))) newPath = $"cover{new Random().Next(1,1000)}.png";
                 newPath = Path.Combine(Plugin.About.CoversStorageFolder, newPath);
                 File.Copy(coverUrl, newPath, true);
+                foreach (string file in Directory.GetFiles(Plugin.About.CoversStorageFolder)) {if (file != newPath) File.Delete(file);};
             }
             
             _filePath = newPath ?? coverUrl;

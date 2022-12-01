@@ -79,7 +79,7 @@ namespace MusicBeePlugin.Drawing
             {
                 _settings.SetFromKey("roundPfpCheck", _drawRounded.ToString() ?? "False", true); //TODO: safety key
                 _settings.SetFromKey("customGifSpeed", 10.ToString(), true);
-                _settings.SetFromKey("useTimerDrawing", false.ToString(), true);
+                _settings.SetFromKey("useTimerDrawing", true.ToString(), true);
                 _drawRounded = false;
                 _customGifSpeed = 10;
                 _useTimerDrawing = false;
@@ -108,6 +108,7 @@ namespace MusicBeePlugin.Drawing
 
             using (GifHandler handler = new GifHandler(currentPath, GifHandler.GifScope.MainPanel))
             {
+                _picBox.Invalidate();
                 _timer.Stop();
                 if (currentPath == null || _pfp == null || _pfpPath != _oldPfpPath || _useTimerDrawing != _oldUseTimerDrawing)
                 {
@@ -134,7 +135,6 @@ namespace MusicBeePlugin.Drawing
             }
             return _pfp;
         }
-        
         private Bitmap ResizeImage(Image image, int width, int height)
         {
             var destRect = new Rectangle(0, 0, width, height);
@@ -156,51 +156,11 @@ namespace MusicBeePlugin.Drawing
                     graphics.DrawImage(image, destRect, 0, 0, image.Width,image.Height, GraphicsUnit.Pixel, wrapMode);
                 }
             }
-        
+            
+            image.Dispose();
             return destImage;
         }
-
-        private Bitmap ApplyRoundCorners()
-        {
-            Rectangle plaster = new Rectangle(0, 0, _pfpSize.Width, _pfpSize.Height);
-            Bitmap pfpBmp = ResizeImage(Image.FromFile(_pfpPath), _pfpSize.Width,_pfpSize.Height);
-            Bitmap targetBmp = new Bitmap(_pfpSize.Width, _pfpSize.Height);
-
-            
-            Point pPlasterCenterRelative = new Point(plaster.Width / 2, plaster.Height / 2);
-            Point pImageCenterRelative = new Point(pfpBmp.Width / 2, pfpBmp.Height / 2);
-            Point pOffSetRelative = new Point(pPlasterCenterRelative.X - pImageCenterRelative.X, pPlasterCenterRelative.Y - pImageCenterRelative.Y);
-
-            Point xAbsolutePixel = pOffSetRelative + new Size(plaster.Location); //Find the absolute location
-
-            using (Graphics graphics = Graphics.FromImage(targetBmp))
-            {
-                using (GraphicsPath path = new GraphicsPath())
-                {
-                    using (TextureBrush texture = new TextureBrush(pfpBmp, WrapMode.Clamp))
-                    {
-                        graphics.CompositingMode = CompositingMode.SourceOver;
-                        graphics.CompositingQuality = CompositingQuality.HighQuality;
-                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                        graphics.SmoothingMode = SmoothingMode.HighQuality;
-                        graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                        
-                        graphics.FillRectangle(new SolidBrush(_bgColor), plaster);
-
-                        texture.TranslateTransform(xAbsolutePixel.X, xAbsolutePixel.Y);
-                        
-                        path.AddEllipse(plaster);
-                        graphics.FillEllipse(texture, plaster);
-
-                        path.CloseFigure();
-                        
-                        targetBmp.Tag = _pfpPath;
-
-                        return targetBmp;
-                    }
-                }
-            }
-        }
+        
 
         public static Image P_ResizeImage(Image image, int width, int height)
         {
@@ -233,6 +193,7 @@ namespace MusicBeePlugin.Drawing
             }
             destImage.Tag = image.Tag;
             
+            image.Dispose();
             return destImage;
         }
 
@@ -279,6 +240,7 @@ namespace MusicBeePlugin.Drawing
                         path.CloseFigure();
                         
                         targetBmp.Tag = image.Tag;
+                        pfpBmp.Dispose();
 
                         return targetBmp;
                     }
@@ -286,8 +248,11 @@ namespace MusicBeePlugin.Drawing
             }
         }
 
+        private bool _isPicBoxInitialized = false;
         public void MakePicBox()
         {
+            if (_isPicBoxInitialized) return;
+            
             _controlMain = Plugin.FormControlMain;
 
             void PicBoxMake()
@@ -298,6 +263,7 @@ namespace MusicBeePlugin.Drawing
 
             _controlMain.Invoke((Action)PicBoxMake);
             _picBox.Paint += picBox_Paint;
+            _isPicBoxInitialized = true;
         }
 
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -337,7 +303,7 @@ namespace MusicBeePlugin.Drawing
             _pfpPoint.X = _controlMain.Size.Width / 2 - _pfp.Width / 2;
             _pfpPoint.Y = _controlMain.Size.Height / 2 - _pfp.Height / 2;
 
-            _usernamePoint.X = Convert.ToInt32((_controlMain.Size.Width - _eventArgs.Graphics.MeasureString(_username, SystemFonts.CaptionFont).Width) / 2); // calculate text center relative to text and control size
+            _usernamePoint.X = Convert.ToInt32((_controlMain.Size.Width - _eventArgs.Graphics.MeasureString(string.IsNullOrEmpty(_username) ? PROFILE_NOT_SET_ERR_MSG : _username, SystemFonts.CaptionFont).Width) / 2); // calculate text center relative to text and control size
             _usernamePoint.Y = (_controlMain.Height / 2) + _pfp.Height / 2 + 3;
             
             _picBox.Location = _pfpPoint;

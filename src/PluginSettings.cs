@@ -10,9 +10,9 @@ namespace MusicBeePlugin
         private XmlDocument _xmlDoc = new XmlDocument();
         private Plugin.MusicBeeApiInterface _mbAPI;
         
-        private string _oldFileName = $"mb_Something1.xml"; // Previous project name 
-        private string _fileName = "mb_UserCosmetics.xml"; 
-        private string _filePath;
+        private readonly string _oldFileName = $"mb_Something1.xml"; // Previous project name 
+        private readonly string _fileName = "mb_UserCosmetics.xml"; 
+        private readonly string _filePath;
         
         public PluginSettings(ref Plugin.MusicBeeApiInterface mbAPI)
         {
